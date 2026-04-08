@@ -39,7 +39,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/structure/unit/{unit}/section/{section}', [SectionController::class, 'showDirect'])->name('unit.section.show');
     Route::get('/structure/unit/{unit}/post/{post}', [PostController::class, 'show'])->name('unit.post.show');
     Route::get('/structure', [StructureController::class, 'index'])->name('structure.index');
-
+    
 
     Route::get('/training', [TrainingController::class, 'index'])->name('training.index');
     Route::get('/folder', [FolderController::class, 'index'])->name('folder.index');
