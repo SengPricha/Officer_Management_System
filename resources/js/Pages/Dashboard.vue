@@ -1,16 +1,40 @@
 <script setup>
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.vue";
 import { Head, Link, router } from "@inertiajs/vue3";
+import {onMounted, onUnmounted } from 'vue';
 import { ref, watch } from "vue";
 import Pagination from "@/Components/Pagination.vue";
 import Swal from "sweetalert2";
 
 const props = defineProps({
+    plans: Array,
+    ranks: Array,
     officers: Array,
     filters: Object,
 });
 
-const searchTerm = ref(props.filters?.search || "");
+const openDropdownId = ref(null);
+
+const toggleDropdown = (id) => {
+    if (openDropdownId.value === id) {
+        openDropdownId.value = null;
+    } else {
+        openDropdownId.value = id;
+    }
+};
+
+const closeDropdown = (e) => {
+    if (!e.target.closest('.dropdown-container')) {
+        openDropdownId.value = null;
+    }
+};
+
+onMounted(() => window.addEventListener('click', closeDropdown));
+onUnmounted(() => window.removeEventListener('click', closeDropdown));
+
+const searchTerm = ref(props.filters.search || "");
+const selectedPlan = ref(props.filters.plan || "");
+const selectedRank = ref(props.filters.rank || "");
 
 const toKhmerNumber = (num) => {
     if (num === null || num === undefined) return "";
@@ -31,7 +55,11 @@ const formatKhmerDate = (dateString) => {
 const handleSearch = () => {
     router.get(
         route("dashboard"),
-        { search: searchTerm.value },
+        {
+            search: searchTerm.value,
+            plan: selectedPlan.value,
+            rank: selectedRank.value,
+        },
         {
             preserveState: true,
             replace: true,
@@ -76,24 +104,29 @@ const confirmDelete = (id) => {
         }
     });
 };
+
+watch([selectedRank, selectedPlan], () => {
+    handleSearch();
+});
 </script>
 
 <template>
     <Head title="ផ្ទាំងគ្រប់គ្រង | ស្នងការដ្ឋាននគរបាលខេត្តប៉ៃលិន" />
     <AuthenticatedLayout>
         <div class="py-2">
-            <div class="flex justify-between mb-8 font-siemreap mx-5">
-                <div></div>
+            <div
+                class="flex flex-wrap md:flex-nowrap justify-between gap-4 mb-8 font-siemreap mx-5"
+            >
                 <form
                     @submit.prevent="handleSearch"
-                    class="w-full md:w-3/4 lg:w-1/2 flex gap-2"
+                    class="w-full flex flex-wrap md:flex-nowrap gap-2 items-center"
                 >
-                    <div class="relative flex-grow">
+                    <div class="relative flex-grow max-w-[550px]">
                         <input
                             type="text"
                             v-model="searchTerm"
-                            placeholder="ស្វែងរកអត្តលេខ ឬឈ្មោះមន្រ្តី..."
-                            class="w-full border border-gray-300 rounded-xl px-4 py-3 text-sm leading-7 focus:ring-2 focus:ring-blue-400 outline-none shadow-sm transition-all"
+                            placeholder="ស្វែងរកអត្តលេខ ឬឈ្មោះ..."
+                            class="w-full border border-gray-300 rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-blue-400 outline-none shadow-sm transition-all"
                         />
                         <button
                             v-if="searchTerm !== ''"
@@ -102,7 +135,7 @@ const confirmDelete = (id) => {
                                 handleSearch();
                             "
                             type="button"
-                            class="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-red-500"
+                            class="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-red-500 transition-colors"
                         >
                             <svg
                                 xmlns="http://www.w3.org/2000/svg"
@@ -118,16 +151,60 @@ const confirmDelete = (id) => {
                             </svg>
                         </button>
                     </div>
+
+                    <select
+                        v-model="selectedPlan"
+                        class="border border-gray-300 rounded-xl px-4 leading-7 py-3 text-sm focus:ring-2 focus:ring-blue-400 outline-none shadow-sm min-w-[150px]"
+                    >
+                        <option value="">ជ្រើសរើសផែនទាំងអស់</option>
+                        <option
+                            v-for="plan in plans"
+                            :key="plan.PlanID"
+                            :value="plan.PlanID"
+                        >
+                            {{ plan.PlanName }}
+                        </option>
+                    </select>
+
+                    <select
+                        v-model="selectedRank"
+                        class="border border-gray-300 rounded-xl px-4 py-3 leading-7 text-sm focus:ring-2 focus:ring-blue-400 outline-none shadow-sm w-[300px]"
+                    >
+                        <option value="">ជ្រើសរើសឋានន្តរស័ក្តិ</option>
+                        <option
+                            v-for="rank in ranks"
+                            :key="rank.RankID"
+                            :value="rank.RankID"
+                        >
+                            {{ rank.RankName }}
+                        </option>
+                    </select>
+
                     <button
                         type="submit"
-                        class="bg-[#01AAEB] text-white px-6 py-2 rounded-xl hover:bg-[#079fdb] transition-all shadow-md"
+                        class="bg-[#01AAEB] text-white px-6 py-3 rounded-xl hover:bg-[#079fdb] transition-all shadow-md flex items-center gap-2"
                     >
+                        <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            width="18"
+                            height="18"
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            stroke="currentColor"
+                            stroke-width="2"
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                        >
+                            <circle cx="11" cy="11" r="8" />
+                            <path d="m21 21-4.3-4.3" />
+                        </svg>
                         ស្វែងរក
                     </button>
                 </form>
+
                 <Link
                     :href="route('staff.create')"
-                    class="bg-[#01AAEB] hover:bg-[#079fdb] text-white py-2 px-4 rounded-lg font-siemreap flex items-center shadow-sm transition-all"
+                    class="bg-[#01AAEB] hover:bg-[#079fdb] text-white py-1 px-4 rounded-xl font-siemreap flex items-center shadow-md transition-all text-sm"
                 >
                     <svg
                         xmlns="http://www.w3.org/2000/svg"
@@ -192,17 +269,16 @@ const confirmDelete = (id) => {
                             >
                                 តួនាទី
                             </th>
-
                             <th
                                 class="px-4 py-3 text-left text-xs font-medium text-gray-600"
                             >
-                                ថ្ងៃចូលនគរបាលជាតិ
+                                ផែន
                             </th>
 
                             <th
                                 class="px-4 py-3 text-left text-xs font-medium text-gray-600"
                             >
-                                ស្ថានភាព
+                                ថ្ងៃចូលនគរបាលជាតិ
                             </th>
 
                             <th
@@ -223,96 +299,144 @@ const confirmDelete = (id) => {
                                 :key="row.ID"
                                 class="hover:bg-blue-50/30 transition-colors"
                             >
-                                <td class="px-4 py-3">
+                                <td class="px-4 py-2">
                                     {{ toKhmerNumber(index + 1) }}
                                 </td>
-                                <td class="px-4 py-3 font-medium">
+                                <td class="px-4 py-2 font-medium">
                                     {{ row.rank?.RankName }}
                                 </td>
-                                <td class="px-4 py-3">
+                                <td class="px-4 py-2">
                                     {{ row.OfficerName }}
                                 </td>
-                                <td class="px-4 py-3">
+                                <td class="px-4 py-2">
                                     {{ row.Gender }}
                                 </td>
-                                <td class="px-4 py-3">
+                                <td class="px-4 py-2">
                                     {{ formatKhmerDate(row.DOB) }}
                                 </td>
-                                <td class="px-4 py-3">
+                                <td class="px-4 py-2">
                                     {{ toKhmerNumber(row.OfficerID_Code) }}
                                 </td>
-                                <td class="px-4 py-3">
+                                <td class="px-4 py-2">
                                     {{ row.role?.RoleName }}
                                 </td>
-                                <td class="px-4 py-3">
+                                <td class="px-4 py-2">
+                                    {{ row.plan?.PlanName }}
+                                </td>
+                                <td class="px-4 py-2">
                                     {{ formatKhmerDate(row.StartDate) }}
                                 </td>
-                                <td class="px-4 py-3">
-                                    {{ row.status?.StatusName }}
-                                </td>
-                                <td class="px-4 py-3">
-                                    <div class="flex justify-center gap-4">
-                                        <Link
-                                            :href="route('staff.show', { id: row.ID, origin: 'dashboard' })"
-                                            class="text-blue-500 hover:scale-125 transition-transform"
-                                        >
-                                            <svg
-                                                class="w-5 h-5"
-                                                fill="none"
-                                                stroke="currentColor"
-                                                viewBox="0 0 24 24"
-                                            >
-                                                <path
-                                                    stroke-linecap="round"
-                                                    stroke-linejoin="round"
-                                                    stroke-width="2"
-                                                    d="M15 12a3 3 0 11-6 0 3 3 0 016 0zM2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"
-                                                />
-                                            </svg>
-                                        </Link>
-                                        <Link
-                                            :href="route('staff.edit', { id: row.ID, origin: 'dashboard' })"
-                                            class="text-yellow-500 hover:scale-125 transition-transform"
-                                        >
-                                            <svg
-                                                class="w-5 h-5"
-                                                fill="none"
-                                                stroke="currentColor"
-                                                viewBox="0 0 24 24"
-                                            >
-                                                <path
-                                                    stroke-linecap="round"
-                                                    stroke-linejoin="round"
-                                                    stroke-width="2"
-                                                    d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"
-                                                />
-                                            </svg>
-                                        </Link>
+                                <td class="px-4 py-2 text-center">
+                                    <div
+                                        class="relative dropdown-container inline-block text-left"
+                                    >
                                         <button
-                                            @click="confirmDelete(row.ID)"
-                                            class="text-red-400 hover:text-red-600 hover:scale-125 transition-all"
+                                            @click.stop="toggleDropdown(row.ID)"
+                                            class="p-2 hover:bg-gray-100 rounded-full transition-colors focus:outline-none"
                                         >
                                             <svg
-                                                class="w-5 h-5"
+                                                xmlns="http://www.w3.org/2000/svg"
+                                                width="20"
+                                                height="20"
+                                                viewBox="0 0 24 24"
                                                 fill="none"
                                                 stroke="currentColor"
-                                                viewBox="0 0 24 24"
+                                                stroke-width="2"
+                                                stroke-linecap="round"
+                                                stroke-linejoin="round"
+                                                class="text-gray-600"
                                             >
-                                                <path
-                                                    stroke-linecap="round"
-                                                    stroke-linejoin="round"
-                                                    stroke-width="2"
-                                                    d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
-                                                />
+                                                <circle cx="12" cy="12" r="1" />
+                                                <circle cx="12" cy="5" r="1" />
+                                                <circle cx="12" cy="19" r="1" />
                                             </svg>
                                         </button>
+
+                                        <div
+                                            v-if="openDropdownId === row.ID"
+                                            class="absolute right-0 mt-2 w-32 bg-white border border-gray-200 rounded-lg shadow-xl z-50 overflow-hidden font-siemreap"
+                                        >
+                                            <div class="flex flex-col py-1">
+                                                <Link
+                                                    :href="
+                                                        route('staff.show', {
+                                                            id: row.ID,
+                                                            origin: 'dashboard',
+                                                        })
+                                                    "
+                                                    class="flex items-center gap-3 px-4 py-2 text-sm text-blue-600 hover:bg-blue-50 transition-colors"
+                                                >
+                                                    <svg
+                                                        class="w-4 h-4"
+                                                        fill="none"
+                                                        stroke="currentColor"
+                                                        viewBox="0 0 24 24"
+                                                    >
+                                                        <path
+                                                            stroke-linecap="round"
+                                                            stroke-linejoin="round"
+                                                            stroke-width="2"
+                                                            d="M15 12a3 3 0 11-6 0 3 3 0 016 0zM2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"
+                                                        />
+                                                    </svg>
+                                                    <span>មើលលម្អិត</span>
+                                                </Link>
+
+                                                <Link
+                                                    :href="
+                                                        route('staff.edit', {
+                                                            id: row.ID,
+                                                            origin: 'dashboard',
+                                                        })
+                                                    "
+                                                    class="flex items-center gap-3 px-4 py-2 text-sm text-yellow-600 hover:bg-yellow-50 transition-colors"
+                                                >
+                                                    <svg
+                                                        class="w-4 h-4"
+                                                        fill="none"
+                                                        stroke="currentColor"
+                                                        viewBox="0 0 24 24"
+                                                    >
+                                                        <path
+                                                            stroke-linecap="round"
+                                                            stroke-linejoin="round"
+                                                            stroke-width="2"
+                                                            d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"
+                                                        />
+                                                    </svg>
+                                                    <span>កែប្រែ</span>
+                                                </Link>
+
+                                                <button
+                                                    @click="
+                                                        confirmDelete(row.ID)
+                                                    "
+                                                    class="flex items-center gap-3 px-4 py-2 text-sm text-red-600 hover:bg-red-50 transition-colors w-full text-left"
+                                                >
+                                                    <svg
+                                                        class="w-4 h-4"
+                                                        fill="none"
+                                                        stroke="currentColor"
+                                                        viewBox="0 0 24 24"
+                                                    >
+                                                        <path
+                                                            stroke-linecap="round"
+                                                            stroke-linejoin="round"
+                                                            stroke-width="2"
+                                                            d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
+                                                        />
+                                                    </svg>
+                                                    <span>លុបមន្ត្រី</span>
+                                                </button>
+                                            </div>
+                                        </div>
                                     </div>
                                 </td>
                             </tr>
                         </template>
                         <tr v-else>
                             <td
-                                colspan="8"
+                                colspan="10"
                                 class="px-6 py-20 text-center text-gray-400"
                             >
                                 មិនមានទិន្នន័យមន្ត្រីក្នុងប្រព័ន្ធឡើយ។

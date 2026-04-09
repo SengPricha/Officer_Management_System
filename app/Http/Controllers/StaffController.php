@@ -138,21 +138,32 @@ class StaffController extends Controller
     }
     public function index(Request $request)
     {
-        $officers = Officer::with(['rank', 'role', 'unit', 'status'])
+        $officers = Officer::with(['rank', 'role', 'unit', 'status', 'plan']) // បន្ថែម plan ក្នុង with
             ->where('StatusID', 1)
+            // Filter តាមឈ្មោះ ឬអត្តលេខ
             ->when($request->search, function ($query, $search) {
                 $query->where(function ($q) use ($search) {
                     $q->where('OfficerName', 'like', "%{$search}%")
                         ->orWhere('OfficerID_Code', 'like', "%{$search}%");
                 });
             })
+            // Filter តាមឋានន្តរស័ក្តិ (RankID)
+            ->when($request->rank, function ($query, $rank) {
+                $query->where('RankID', $rank);
+            })
+            // Filter តាមផែន (PlanID)
+            ->when($request->plan, function ($query, $plan) {
+                $query->where('PlanID', $plan);
+            })
             ->orderBy('RankID', 'asc')
-            ->paginate(12)
+            ->paginate(10)
             ->withQueryString();
 
         return Inertia::render('Dashboard', [
             'officers' => $officers,
-            'filters'  => $request->only(['search'])
+            'ranks'    => \App\Models\Rank::all(), // បោះទៅឱ្យ Vue ជ្រើសរើស
+            'plans'    => \App\Models\Plan::all(), // បោះទៅឱ្យ Vue ជ្រើសរើស
+            'filters'  => $request->only(['search', 'rank', 'plan']) // រក្សាតម្លៃ Filter
         ]);
     }
 
