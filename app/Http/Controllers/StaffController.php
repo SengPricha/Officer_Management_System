@@ -67,6 +67,7 @@ class StaffController extends Controller
             'RankID'         => 'required|exists:ranks,RankID',
             'UnitID'         => 'required|integer',
             'StatusID'       => 'required|integer',
+            'StatusNote'     => 'required_if:StatusID,4,5,6,12|max:255',
             'RoleID'         => 'nullable|exists:roles,RoleID',
             'DOB'            => 'nullable|date',
             'StartDate'      => 'nullable|date',
@@ -100,6 +101,12 @@ class StaffController extends Controller
                 $officer->SectionID      = $request->SectionID;
                 $officer->PostID         = $request->PostID;
                 $officer->StatusID       = $request->StatusID;
+
+                if (in_array($request->StatusID, [4, 5, 6,12])) {
+                    $officer->StatusNote = $request->StatusNote;
+                } else {
+                    $officer->StatusNote = null;
+                }
 
                 if ($request->hasFile('profile_image')) {
                     $file = $request->file('profile_image');
@@ -247,6 +254,7 @@ class StaffController extends Controller
             'DOB'            => 'required|date',
             'StartDate'      => 'required|date',
             'StatusID'       => 'required',
+            'StatusNote'     => 'required_if:StatusID,4,5,6,12|max:255',
             'ProfileImage'   => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
             'UnitID'         => 'required|exists:units,UnitID',
             'PlanID'         => 'nullable|exists:plans,PlanID',
@@ -256,6 +264,12 @@ class StaffController extends Controller
 
             'documents.*'    => 'nullable|file|mimes:pdf,doc,docx,jpg,png|max:5120',
         ], []);
+
+        if (!in_array($request->StatusID, [4, 5, 6,12])) {
+            $validatedData['StatusNote'] = null;
+        } else {
+            $validatedData['StatusNote'] = $request->StatusNote;
+        }
 
         if ($request->hasFile('ProfileImage')) {
             if (!empty($officer->ProfileImage)) {

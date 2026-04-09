@@ -79,7 +79,7 @@ const confirmDelete = (id) => {
 </script>
 
 <template>
-    <Head title="ការងារសិក្សា | ស្នងការដ្ឋាននគរបាលខេត្តប៉ៃលិន" />
+    <Head title="ការសរសើរ | ស្នងការដ្ឋាននគរបាលខេត្តប៉ៃលិន" />
     <AuthenticatedLayout>
         <div class="py-2">
             <div class="flex justify-center mb-8 font-siemreap mx-5">
@@ -89,7 +89,7 @@ const confirmDelete = (id) => {
                     >
                         <div class="w-1/2 bg-white py-4 px-2 rounded-lg">
                             <h1 class="font-siemreap text-lg font-bold">
-                                បញ្ជីឈ្មោះមន្ត្រីការងារសិក្សា
+                                បញ្ជីឈ្មោះមន្ត្រីការសរសើរ
                             </h1>
                         </div>
                         <div class="flex w-1/2 gap-2">

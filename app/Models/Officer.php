@@ -26,7 +26,8 @@ class Officer extends Model
         'OfficeID',
         'SectionID',
         'PostID',
-        'StatusID'
+        'StatusID',
+        'StatusNote'
     ];
 
 

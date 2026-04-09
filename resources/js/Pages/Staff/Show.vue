@@ -222,7 +222,7 @@ const formatKhmerDate = (dateStr) => {
                                 </div>
                             </div>
                             <div
-                                class="grid grid-cols-[200px_1fr] py-4 items-center gap-4"
+                                class="grid grid-cols-[200px_1fr] py-4 items-center gap-4 border-b border-gray-100"
                             >
                                 <div
                                     class="text-md text-gray-700 font-siemreap flex-shrink-0"
@@ -231,6 +231,13 @@ const formatKhmerDate = (dateStr) => {
                                 </div>
                                 <div class="text-md font-moul flex-1">
                                     {{ officer.status?.StatusName }}
+
+                                    <span
+                                        v-if="officer.StatusNote"
+                                        class="font-siemreap text-gray-700 text-sm ml-1"
+                                    >
+                                        ({{ officer.StatusNote }})
+                                    </span>
                                 </div>
                             </div>
                         </div>

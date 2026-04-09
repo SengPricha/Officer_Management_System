@@ -4,6 +4,7 @@ import DropdownLink from "@/Components/DropdownLink.vue";
 import { Link } from "@inertiajs/vue3";
 
 const Icons = {
+    Praise:`<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24"><rect width="24" height="24" fill="none"/><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"><path d="M12 7v14m8-10v8a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2v-8m3.5-4a1 1 0 0 1 0-5A4.8 8 0 0 1 12 7a4.8 8 0 0 1 4.5-5a1 1 0 0 1 0 5"/><rect width="18" height="4" x="3" y="7" rx="1"/></g></svg>`,
     Search: `<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>`,
     Dashboard: `<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="7" height="9" x="3" y="3" rx="1"/><rect width="7" height="5" x="14" y="3" rx="1"/><rect width="7" height="9" x="14" y="12" rx="1"/><rect width="7" height="5" x="3" y="16" rx="1"/></svg>`,
     Structure: `<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>`,
@@ -102,6 +103,18 @@ const Icons = {
                     <span class="mr-3" v-html="Icons.Study"></span>
                     ការងារសិក្សា
                 </Link>
+                <Link
+                    :href="route('praise.index')"
+                    :class="
+                        route().current('praise.*')
+                            ? 'bg-[#01AAEB] text-white shadow-lg shadow-blue-100'
+                            : 'text-gray-500 hover:bg-[#01AAEB] hover:text-white'
+                    "
+                    class="flex items-center px-4 py-3 rounded-xl font-bold transition-all duration-300"
+                >
+                    <span class="mr-3" v-html="Icons.Praise"></span>
+                    ការសរសើរ
+                </Link>
 
                 <Link
                     :href="route('discipline.index')"
@@ -113,19 +126,6 @@ const Icons = {
                     class="flex items-center px-4 py-3 rounded-xl font-bold transition-all duration-300"
                 >
                     <span class="mr-3" v-html="Icons.Discipline"></span>វិន័យ
-                </Link>
-
-                <Link
-                    :href="route('retired.index')"
-                    :class="
-                        route().current('retired.*')
-                            ? 'bg-[#01AAEB] text-white shadow-lg shadow-blue-100'
-                            : 'text-gray-500 hover:bg-[#01AAEB] hover:text-white'
-                    "
-                    class="flex items-center px-4 py-3 rounded-xl font-bold transition-all duration-300"
-                >
-                    <span class="mr-3" v-html="Icons.Retire"></span>
-                    សោធននិវត្តន៍
                 </Link>
                 <Link
                     :href="route('transferin.index')"
@@ -152,28 +152,16 @@ const Icons = {
                     ផ្ទេរចេញ
                 </Link>
                 <Link
-                    :href="route('death.index')"
+                    :href="route('suspend.index')"
                     :class="
-                        route().current('death.*')
+                        route().current('suspend.*')
                             ? 'bg-[#01AAEB] text-white shadow-lg shadow-blue-100'
                             : 'text-gray-500 hover:bg-[#01AAEB] hover:text-white'
                     "
                     class="flex items-center px-4 py-3 rounded-xl font-bold transition-all duration-300"
                 >
-                    <span class="mr-3" v-html="Icons.Death"></span>
-                    មរណៈ
-                </Link>
-                <Link
-                    :href="route('dismiss.index')"
-                    :class="
-                        route().current('dismiss.*')
-                            ? 'bg-[#01AAEB] text-white shadow-lg shadow-blue-100'
-                            : 'text-gray-500 hover:bg-[#01AAEB] hover:text-white'
-                    "
-                    class="flex items-center px-4 py-3 rounded-xl font-bold transition-all duration-300"
-                >
-                    <span class="mr-3" v-html="Icons.Dismissed"></span>
-                    កាត់/បណ្ដេញចេញពីក្របខណ្ឌ
+                    <span class="mr-3" v-html="Icons.Report"></span>
+                    ព្យួរក្របខណ្ឌ
                 </Link>
                 <Link
                     :href="route('disabled.index')"
@@ -188,16 +176,40 @@ const Icons = {
                     ពិការ/បាត់បង់សមត្ថភាព
                 </Link>
                 <Link
-                    :href="route('suspend.index')"
+                    :href="route('dismiss.index')"
                     :class="
-                        route().current('suspend.*')
+                        route().current('dismiss.*')
                             ? 'bg-[#01AAEB] text-white shadow-lg shadow-blue-100'
                             : 'text-gray-500 hover:bg-[#01AAEB] hover:text-white'
                     "
                     class="flex items-center px-4 py-3 rounded-xl font-bold transition-all duration-300"
                 >
-                    <span class="mr-3" v-html="Icons.Report"></span>
-                    ព្យួរក្របខណ្ឌ
+                    <span class="mr-3" v-html="Icons.Dismissed"></span>
+                    កាត់/បណ្ដេញចេញពីក្របខណ្ឌ
+                </Link>
+                <Link
+                    :href="route('retired.index')"
+                    :class="
+                        route().current('retired.*')
+                            ? 'bg-[#01AAEB] text-white shadow-lg shadow-blue-100'
+                            : 'text-gray-500 hover:bg-[#01AAEB] hover:text-white'
+                    "
+                    class="flex items-center px-4 py-3 rounded-xl font-bold transition-all duration-300"
+                >
+                    <span class="mr-3" v-html="Icons.Retire"></span>
+                    សោធននិវត្តន៍
+                </Link>
+                <Link
+                    :href="route('death.index')"
+                    :class="
+                        route().current('death.*')
+                            ? 'bg-[#01AAEB] text-white shadow-lg shadow-blue-100'
+                            : 'text-gray-500 hover:bg-[#01AAEB] hover:text-white'
+                    "
+                    class="flex items-center px-4 py-3 rounded-xl font-bold transition-all duration-300"
+                >
+                    <span class="mr-3" v-html="Icons.Death"></span>
+                    មរណៈ
                 </Link>
             </nav>
 

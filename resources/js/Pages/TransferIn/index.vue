@@ -89,7 +89,7 @@ const confirmDelete = (id) => {
                     >
                         <div class="w-1/2 bg-white py-4 px-2 rounded-lg">
                             <h1 class="font-siemreap text-lg font-bold">
-                                បញ្ជីឈ្មោះមន្ត្រីផ្ទេរចូល (ផ្ទេរពីខេត្តផ្សេងមក)
+                                បញ្ជីឈ្មោះមន្ត្រីផ្ទេរចូល
                             </h1>
                         </div>
                         <div class="flex w-1/2 gap-2">
@@ -236,8 +236,19 @@ const confirmDelete = (id) => {
                                 <td class="px-4 py-3">
                                     {{ formatKhmerDate(row.StartDate) }}
                                 </td>
-                                <td class="px-4 py-3">
-                                    {{ row.status?.StatusName }}
+                                <td class="px-4 py-3 font-siemreap text-sm">
+                                    <div class="flex items-center gap-1">
+                                        <span class="font-medium text-gray-900">
+                                            {{ row.status?.StatusName }}
+                                        </span>
+
+                                        <span
+                                            v-if="row.StatusNote"
+                                            class="text-gray-500"
+                                        >
+                                            ({{ row.StatusNote }})
+                                        </span>
+                                    </div>
                                 </td>
                                 <td class="px-4 py-3">
                                     <div class="flex justify-center gap-4">

@@ -16,6 +16,7 @@ use App\Http\Controllers\PostController;
 use App\Http\Controllers\StructureController;
 use App\Http\Controllers\SuspendController;
 use App\Http\Controllers\PlanController;
+use App\Http\Controllers\PraiseController;
 use App\Http\Controllers\UnitController;
 use App\Http\Controllers\StaffController;
 use Illuminate\Support\Facades\Route;
@@ -39,8 +40,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/structure/unit/{unit}/section/{section}', [SectionController::class, 'showDirect'])->name('unit.section.show');
     Route::get('/structure/unit/{unit}/post/{post}', [PostController::class, 'show'])->name('unit.post.show');
     Route::get('/structure', [StructureController::class, 'index'])->name('structure.index');
-    
 
+    Route::get('/praise', [PraiseController::class, 'index'])->name('praise.index');
     Route::get('/training', [TrainingController::class, 'index'])->name('training.index');
     Route::get('/folder', [FolderController::class, 'index'])->name('folder.index');
     Route::get('/discipline', [DisciplineController::class, 'index'])->name('discipline.index');
