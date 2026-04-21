@@ -38,6 +38,7 @@ const form = useForm({
     PostID: "",
     StartDate: "",
     StatusID: "",
+    StatusNote: "",
     profile_image: null,
     documents: [],
 });
@@ -684,37 +685,70 @@ watch(
                                 </p>
                             </div>
                         </div>
-                        <div class="flex flex-col md:flex-row md:items-center">
-                            <label class="w-72 text-gray-700">ស្ថានភាព*:</label>
-
-                            <div class="w-full">
-                                <select
-                                    v-model="form.StatusID"
-                                    class="mt-1 block w-full border border-gray-300 leading-7 outline-none transition-all focus:border-blue-500 focus:ring-2 focus:ring-blue-200 rounded-md p-2 text-sm cursor-pointer"
-                                    :class="
-                                        form.StatusID === ''
-                                            ? 'text-gray-500'
-                                            : 'text-gray-900'
-                                    "
+                        <div class="flex flex-col gap-4">
+                            <div
+                                class="flex flex-col md:flex-row md:items-center"
+                            >
+                                <label class="w-72 text-gray-700 font-siemreap"
+                                    >ស្ថានភាព*:</label
                                 >
-                                    <option value="" disabled>
-                                        ជ្រើសរើសស្ថានភាព
-                                    </option>
-                                    <option
-                                        v-for="status in statuses"
-                                        :key="status.id"
-                                        :value="status.id"
+
+                                <div class="w-full">
+                                    <select
+                                        v-model="form.StatusID"
+                                        class="mt-1 block w-full border border-gray-300 leading-7 outline-none transition-all focus:border-blue-500 focus:ring-2 focus:ring-blue-200 rounded-md p-2 text-sm cursor-pointer"
+                                        :class="
+                                            form.StatusID === ''
+                                                ? 'text-gray-500'
+                                                : 'text-gray-900'
+                                        "
                                     >
-                                        {{ status.name }}
-                                    </option>
-                                </select>
+                                        <option value="" disabled>
+                                            ជ្រើសរើសស្ថានភាព
+                                        </option>
+                                        <option
+                                            v-for="status in statuses"
+                                            :key="status.id"
+                                            :value="status.id"
+                                        >
+                                            {{ status.name }}
+                                        </option>
+                                    </select>
 
-                                <p
-                                    v-if="form.errors.StatusID"
-                                    class="mt-2 text-[11px] text-red-600 font-siemreap leading-none"
+                                    <p
+                                        v-if="form.errors.StatusID"
+                                        class="mt-2 text-[11px] text-red-600 font-siemreap leading-none"
+                                    >
+                                        {{ form.errors.StatusID }}
+                                    </p>
+                                </div>
+                            </div>
+
+                            <div
+                                v-if="
+                                    [4, 5, 6, 12].includes(
+                                        Number(form.StatusID),
+                                    )
+                                "
+                                class="flex flex-col md:flex-row md:items-center mt-2"
+                            >
+                                <label class="w-72 text-gray-700 font-siemreap"
+                                    >បញ្ជាក់*:</label
                                 >
-                                    {{ form.errors.StatusID }}
-                                </p>
+                                <div class="w-full">
+                                    <input
+                                        type="text"
+                                        v-model="form.StatusNote"
+                                        placeholder="បញ្ជាក់មូលហេតុ ឬព័ត៌មានបន្ថែម..."
+                                        class="mt-1 block w-full border border-gray-300 leading-7 outline-none transition-all focus:border-blue-500 focus:ring-2 focus:ring-blue-200 rounded-md p-2 text-sm font-siemreap"
+                                    />
+                                    <p
+                                        v-if="form.errors.StatusNote"
+                                        class="mt-2 text-[11px] text-red-600 font-siemreap leading-none"
+                                    >
+                                        {{ form.errors.StatusNote }}
+                                    </p>
+                                </div>
                             </div>
                         </div>
                         <div class="flex justify-between items-start gap-4">
