@@ -97,7 +97,8 @@ const deleteFile = (id) => {
                         <h2 class="text-md font-siemreap text-gray-800">
                             {{
                                 selectedFolder
-                                    ? "សំណុំលិខិតឯកសាររបស់៖ " + selectedFolder.name
+                                    ? "សំណុំលិខិតឯកសាររបស់៖ " +
+                                      selectedFolder.name
                                     : "សំណុំលិខិតឯកសារមន្ត្រី"
                             }}
                         </h2>
@@ -176,7 +177,7 @@ const deleteFile = (id) => {
                     >
                         <svg
                             xmlns="http://www.w3.org/2000/svg"
-                            class="h-8 w-8 text-gray-400 group-hover:text-blue-500 transition-colors"
+                            class="h-8 w-8 text-yellow-500 transition-colors"
                             fill="currentColor"
                             viewBox="0 0 24 24"
                         >

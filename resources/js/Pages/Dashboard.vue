@@ -223,7 +223,7 @@ watch([selectedRank, selectedPlan], () => {
             </div>
 
             <div
-                class="bg-white p-4 rounded-xl shadow-md overflow-x-auto mx-5 border border-gray-100"
+                class="bg-white p-4 rounded-xl shadow-md overflow-visible mx-5 border border-gray-100"
             >
                 <table class="min-w-full divide-y divide-gray-200">
                     <thead class="bg-gray-50 font-moul">
