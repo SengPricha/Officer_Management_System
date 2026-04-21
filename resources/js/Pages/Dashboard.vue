@@ -125,7 +125,7 @@ watch([selectedRank, selectedPlan], () => {
                         <input
                             type="text"
                             v-model="searchTerm"
-                            placeholder="ស្វែងរកអត្តលេខ ឬឈ្មោះ..."
+                            placeholder="ស្វែងរកអត្តលេខ ឬឈ្មោះមន្រ្តី..."
                             class="w-full border border-gray-300 rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-blue-400 outline-none shadow-sm transition-all"
                         />
                         <button
@@ -223,7 +223,7 @@ watch([selectedRank, selectedPlan], () => {
             </div>
 
             <div
-                class="bg-white p-4 rounded-xl shadow-md mt-4 overflow-x-auto mx-5 border border-gray-100"
+                class="bg-white p-4 rounded-xl shadow-md overflow-x-auto mx-5 border border-gray-100"
             >
                 <table class="min-w-full divide-y divide-gray-200">
                     <thead class="bg-gray-50 font-moul">
