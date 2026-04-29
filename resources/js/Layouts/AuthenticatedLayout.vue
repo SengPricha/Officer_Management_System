@@ -113,7 +113,7 @@ const Icons = {
                     class="flex items-center px-4 py-3 rounded-xl font-bold transition-all duration-300"
                 >
                     <span class="mr-3" v-html="Icons.Praise"></span>
-                    ការសរសើរ
+                    លើកសរសើរ
                 </Link>
 
                 <Link

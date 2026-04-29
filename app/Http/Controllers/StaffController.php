@@ -68,9 +68,9 @@ class StaffController extends Controller
             'UnitID'         => 'required|integer',
             'StatusID'       => 'required|integer',
             'StatusNote'     => 'required_if:StatusID,4,5,6,12|max:255',
-            'RoleID'         => 'nullable|exists:roles,RoleID',
-            'DOB'            => 'nullable|date',
-            'StartDate'      => 'nullable|date',
+            'RoleID'         => 'required|exists:roles,RoleID',
+            'DOB'            => 'required|date',
+            'StartDate'      => 'required|date',
         ], [
             'RankID.required' => 'សូមជ្រើសរើសឋានន្តរស័ក្ដិ',
             'OfficerName.required' => 'សូមបញ្ចូលឈ្មោះមន្រ្តី',
@@ -80,8 +80,8 @@ class StaffController extends Controller
             'UnitID.required' => 'សូមជ្រើសរើសអង្គភាព',
             'StatusID.required' => 'សូមជ្រើសរើសស្ថានភាព',
             'RoleID.required' => 'សូមជ្រើសរើសតួនាទី',
-            'DOB.date' => 'សូមបញ្ចូលថ្ងៃខែឆ្នាំកំណើត',
-            'StartDate.date' => 'សូមបញ្ចូលថ្ងៃខែឆ្នាំចូលនគរបាលជាតិ',
+            'DOB.required' => 'សូមបញ្ចូលថ្ងៃខែឆ្នាំកំណើត',
+            'StartDate.required' => 'សូមបញ្ចូលថ្ងៃខែឆ្នាំចូលនគរបាលជាតិ',
         ]);
 
         try {
@@ -102,7 +102,7 @@ class StaffController extends Controller
                 $officer->PostID         = $request->PostID;
                 $officer->StatusID       = $request->StatusID;
 
-                if (in_array($request->StatusID, [4, 5, 6,12])) {
+                if (in_array($request->StatusID, [4, 5, 6, 12])) {
                     $officer->StatusNote = $request->StatusNote;
                 } else {
                     $officer->StatusNote = null;
@@ -145,22 +145,23 @@ class StaffController extends Controller
     }
     public function index(Request $request)
     {
-        $officers = Officer::with(['rank', 'role', 'unit', 'status', 'plan']) // បន្ថែម plan ក្នុង with
+        $officers = Officer::with(['rank', 'role', 'unit', 'status', 'plan', 'office'])
             ->where('StatusID', 1)
-            // Filter តាមឈ្មោះ ឬអត្តលេខ
             ->when($request->search, function ($query, $search) {
+                $search = trim($search);
                 $query->where(function ($q) use ($search) {
                     $q->where('OfficerName', 'like', "%{$search}%")
                         ->orWhere('OfficerID_Code', 'like', "%{$search}%");
                 });
             })
-            // Filter តាមឋានន្តរស័ក្តិ (RankID)
             ->when($request->rank, function ($query, $rank) {
                 $query->where('RankID', $rank);
             })
-            // Filter តាមផែន (PlanID)
             ->when($request->plan, function ($query, $plan) {
                 $query->where('PlanID', $plan);
+            })
+            ->when($request->office, function ($query, $office) {
+                $query->where('OfficeID', $office);
             })
             ->orderBy('RankID', 'asc')
             ->paginate(10)
@@ -168,13 +169,14 @@ class StaffController extends Controller
 
         return Inertia::render('Dashboard', [
             'officers' => $officers,
-            'ranks'    => \App\Models\Rank::all(), // បោះទៅឱ្យ Vue ជ្រើសរើស
-            'plans'    => \App\Models\Plan::all(), // បោះទៅឱ្យ Vue ជ្រើសរើស
-            'filters'  => $request->only(['search', 'rank', 'plan']) // រក្សាតម្លៃ Filter
+            'ranks'    => \App\Models\Rank::all(),
+            'plans'    => \App\Models\Plan::all(),
+            'offices'  => \App\Models\Office::all(),
+            'filters'  => $request->only(['search', 'rank', 'plan', 'office'])
         ]);
     }
 
-    public function show(Request $request, $id)
+    public function show(Request $request, int $id)
     {
         $officer = Officer::with([
             'rank',
@@ -185,7 +187,12 @@ class StaffController extends Controller
             'post',
             'status',
             'role',
-            'documents'
+            'documents',
+            'biographies' => function ($query) {
+                $query->orderBy('id', 'asc');
+            },
+            'biographies.rank',
+            'biographies.role',
         ])->findOrFail($id);
 
         return Inertia::render('Staff/Show', [
@@ -194,19 +201,19 @@ class StaffController extends Controller
         ]);
     }
 
-    public function destroy($id)
+    public function destroy(int $id)
     {
         $officer = Officer::with('documents')->findOrFail($id);
         foreach ($officer->documents as $doc) {
             Storage::delete('public/documents/' . $doc->FileName);
-            $doc->delete();
+            $doc->delete($id);
         }
-        $officer->delete();
+        $officer->delete($id);
 
         return redirect()->route('dashboard')->with('success', 'ទិន្នន័យមន្ត្រីត្រូវបានលុបដោយជោគជ័យ');
     }
 
-    public function edit(Request $request, $id)
+    public function edit(Request $request,int $id)
     {
         $officer = Officer::findOrFail($id);
         $officer = Officer::with('documents')->findOrFail($id);
@@ -241,7 +248,7 @@ class StaffController extends Controller
         ]);
     }
 
-    public function update(Request $request, $id)
+    public function update(Request $request,int $id)
     {
         $officer = Officer::findOrFail($id);
 
@@ -261,14 +268,13 @@ class StaffController extends Controller
             'OfficeID'       => 'nullable|exists:offices,OfficeID',
             'SectionID'      => 'nullable|exists:sections,SectionID',
             'PostID'         => 'nullable|exists:posts,PostID',
-
             'documents.*'    => 'nullable|file|mimes:pdf,doc,docx,jpg,png|max:5120',
         ], []);
 
-        if (!in_array($request->StatusID, [4, 5, 6,12])) {
-            $validatedData['StatusNote'] = null;
+        if (!in_array($request->StatusID, [4, 5, 6, 12])) {
+            $data['StatusNote'] = null;
         } else {
-            $validatedData['StatusNote'] = $request->StatusNote;
+            $data['StatusNote'] = $request->StatusNote;
         }
 
         if ($request->hasFile('ProfileImage')) {

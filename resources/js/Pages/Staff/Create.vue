@@ -117,20 +117,6 @@ const submit = () => {
                 timerProgressBar: true,
             });
         },
-        onError: (errors) => {
-            Swal.fire({
-                title: "មានកំហុស!",
-                text: "សូមពិនិត្យមើលទិន្នន័យដែលអ្នកបានបំពេញឡើងវិញ",
-                icon: "error",
-                customClass: {
-                    title: "font-siemreap",
-                    htmlContainer: "font-siemreap",
-                    confirmButton: "font-siemreap",
-                },
-                confirmButtonText: "ព្យាយាមម្ដងទៀត",
-                confirmButtonColor: "#d33",
-            });
-        },
     });
 };
 

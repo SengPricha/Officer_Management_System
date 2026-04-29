@@ -19,6 +19,7 @@ use App\Http\Controllers\PlanController;
 use App\Http\Controllers\PraiseController;
 use App\Http\Controllers\UnitController;
 use App\Http\Controllers\StaffController;
+use App\Http\Controllers\OfficerBiographyController;
 use Illuminate\Support\Facades\Route;
 
 use Inertia\Inertia;
@@ -62,6 +63,10 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/staff/{id}/edit', [StaffController::class, 'edit'])->name('staff.edit');
     Route::put('/staff/{id}', [StaffController::class, 'update'])->name('staff.update');
     Route::delete('/staff/{id}', [StaffController::class, 'destroy'])->name('staff.destroy');
+
+    Route::get('/biography/{id}', [OfficerBiographyController::class, 'index'])->name('biography.index');
+    Route::post('/biography/{id}/update', [OfficerBiographyController::class, 'update'])->name('biography.update');
+    Route::post('/biography', [OfficerBiographyController::class, 'store'])->name('biography.store');
 });
 
 require __DIR__ . '/auth.php';

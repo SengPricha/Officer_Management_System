@@ -77,4 +77,10 @@ class Officer extends Model
     {
         return $this->belongsTo(Status::class, 'StatusID', 'StatusID');
     }
+    public function biographies()
+    {
+        return $this->hasMany(OfficerBiography::class, 'officer_id', 'ID')
+            ->with(['rank', 'role'])
+            ->orderBy('effective_date', 'asc');
+    }
 }

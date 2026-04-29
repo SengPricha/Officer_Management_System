@@ -9,14 +9,12 @@ class StructureController extends Controller
 {
     public function index()
     {
-        $units = Unit::with([
-            'plan.office.section',
-            'section',
-            'post',
-        ])->get();
+        $units = Unit::with(['section', 'post', 'plan.office.section'])
+            ->orderBy('UnitID', 'asc')
+            ->get();
 
         return Inertia::render('Structure/index', [
-            'units' => $units
+            'units' => $units,
         ]);
     }
 }

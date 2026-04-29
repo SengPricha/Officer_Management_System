@@ -197,7 +197,7 @@ watch(
             form.DOB = newVal.DOB || "";
             form.StartDate = newVal.StartDate || "";
             form.StatusID = newVal.StatusID || "";
-
+            form.StatusNote = newVal.StatusNote || "";
             if (newVal.ProfileImage) {
                 imageUrl.value = `/storage/profiles/${newVal.ProfileImage}`;
             }
@@ -849,12 +849,6 @@ const submit = () => {
                                                 : 'border-gray-300'
                                         "
                                     />
-                                    <p
-                                        v-if="form.errors.StatusNote"
-                                        class="text-red-500 text-[11px] mt-1 font-siemreap"
-                                    >
-                                        {{ form.errors.StatusNote }}
-                                    </p>
                                 </div>
                             </div>
                         </div>

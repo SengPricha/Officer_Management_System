@@ -1,14 +1,16 @@
 <script setup>
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.vue";
 import { Head, Link, router } from "@inertiajs/vue3";
-import {onMounted, onUnmounted } from 'vue';
+import { onMounted, onUnmounted } from "vue";
 import { ref, watch } from "vue";
 import Pagination from "@/Components/Pagination.vue";
 import Swal from "sweetalert2";
+import debounce from "lodash/debounce";
 
 const props = defineProps({
     plans: Array,
     ranks: Array,
+    offices: Array,
     officers: Array,
     filters: Object,
 });
@@ -24,17 +26,17 @@ const toggleDropdown = (id) => {
 };
 
 const closeDropdown = (e) => {
-    if (!e.target.closest('.dropdown-container')) {
+    if (!e.target.closest(".dropdown-container")) {
         openDropdownId.value = null;
     }
 };
 
-onMounted(() => window.addEventListener('click', closeDropdown));
-onUnmounted(() => window.removeEventListener('click', closeDropdown));
+onMounted(() => window.addEventListener("click", closeDropdown));
+onUnmounted(() => window.removeEventListener("click", closeDropdown));
 
 const searchTerm = ref(props.filters.search || "");
 const selectedPlan = ref(props.filters.plan || "");
-const selectedRank = ref(props.filters.rank || "");
+const selectedOffice = ref(props.filters.office || "");
 
 const toKhmerNumber = (num) => {
     if (num === null || num === undefined) return "";
@@ -52,20 +54,24 @@ const formatKhmerDate = (dateString) => {
     return toKhmerNumber(formattedDate);
 };
 
-const handleSearch = () => {
+const goToDetail = (id) => {
+    router.visit(route("staff.show", { id: id, origin: "dashboard" }));
+};
+
+const handleSearch = debounce(() => {
     router.get(
         route("dashboard"),
         {
             search: searchTerm.value,
             plan: selectedPlan.value,
-            rank: selectedRank.value,
+            office: selectedOffice.value,
         },
         {
             preserveState: true,
             replace: true,
         },
     );
-};
+}, 300);
 
 const confirmDelete = (id) => {
     Swal.fire({
@@ -105,7 +111,7 @@ const confirmDelete = (id) => {
     });
 };
 
-watch([selectedRank, selectedPlan], () => {
+watch([searchTerm, selectedOffice, selectedPlan], () => {
     handleSearch();
 });
 </script>
@@ -117,8 +123,7 @@ watch([selectedRank, selectedPlan], () => {
             <div
                 class="flex flex-wrap md:flex-nowrap justify-between gap-4 mb-8 font-siemreap mx-5"
             >
-                <form
-                    @submit.prevent="handleSearch"
+                <div
                     class="w-full flex flex-wrap md:flex-nowrap gap-2 items-center"
                 >
                     <div class="relative flex-grow max-w-[550px]">
@@ -126,14 +131,11 @@ watch([selectedRank, selectedPlan], () => {
                             type="text"
                             v-model="searchTerm"
                             placeholder="ស្វែងរកអត្តលេខ ឬឈ្មោះមន្រ្តី..."
-                            class="w-full border border-gray-300 rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-blue-400 outline-none shadow-sm transition-all"
+                            class="w-full border border-gray-300 rounded-xl px-4 py-3.5 text-sm focus:ring-2 focus:ring-blue-400 outline-none shadow-sm transition-all"
                         />
                         <button
                             v-if="searchTerm !== ''"
-                            @click="
-                                searchTerm = '';
-                                handleSearch();
-                            "
+                            @click="searchTerm = ''"
                             type="button"
                             class="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-red-500 transition-colors"
                         >
@@ -154,7 +156,7 @@ watch([selectedRank, selectedPlan], () => {
 
                     <select
                         v-model="selectedPlan"
-                        class="border border-gray-300 rounded-xl px-4 leading-7 py-3 text-sm focus:ring-2 focus:ring-blue-400 outline-none shadow-sm min-w-[150px]"
+                        class="border border-gray-300 rounded-xl leading-6 px-4 py-3 text-sm focus:ring-2 focus:ring-blue-400 outline-none shadow-sm min-w-[150px]"
                     >
                         <option value="">ជ្រើសរើសផែនទាំងអស់</option>
                         <option
@@ -167,40 +169,19 @@ watch([selectedRank, selectedPlan], () => {
                     </select>
 
                     <select
-                        v-model="selectedRank"
-                        class="border border-gray-300 rounded-xl px-4 py-3 leading-7 text-sm focus:ring-2 focus:ring-blue-400 outline-none shadow-sm w-[300px]"
+                        v-model="selectedOffice"
+                        class="border border-gray-300 rounded-xl leading-6 px-4 py-3 text-sm focus:ring-2 focus:ring-blue-400 outline-none shadow-sm w-[300px] font-siemreap"
                     >
-                        <option value="">ជ្រើសរើសឋានន្តរស័ក្តិ</option>
+                        <option value="">ជ្រើសរើសការិយាល័យ</option>
                         <option
-                            v-for="rank in ranks"
-                            :key="rank.RankID"
-                            :value="rank.RankID"
+                            v-for="office in offices"
+                            :key="office.OfficeID"
+                            :value="office.OfficeID"
                         >
-                            {{ rank.RankName }}
+                            {{ office.OfficeName }}
                         </option>
                     </select>
-
-                    <button
-                        type="submit"
-                        class="bg-[#01AAEB] text-white px-6 py-3 rounded-xl hover:bg-[#079fdb] transition-all shadow-md flex items-center gap-2"
-                    >
-                        <svg
-                            xmlns="http://www.w3.org/2000/svg"
-                            width="18"
-                            height="18"
-                            viewBox="0 0 24 24"
-                            fill="none"
-                            stroke="currentColor"
-                            stroke-width="2"
-                            stroke-linecap="round"
-                            stroke-linejoin="round"
-                        >
-                            <circle cx="11" cy="11" r="8" />
-                            <path d="m21 21-4.3-4.3" />
-                        </svg>
-                        ស្វែងរក
-                    </button>
-                </form>
+                </div>
 
                 <Link
                     :href="route('staff.create')"
@@ -226,7 +207,7 @@ watch([selectedRank, selectedPlan], () => {
                 class="bg-white p-4 rounded-xl shadow-md overflow-visible mx-5 border border-gray-100"
             >
                 <table class="min-w-full divide-y divide-gray-200">
-                    <thead class="bg-gray-50 font-moul">
+                    <thead class="bg-gray-100 font-moul">
                         <tr>
                             <th
                                 class="px-4 py-3 text-left text-xs font-medium text-gray-600"
@@ -278,7 +259,7 @@ watch([selectedRank, selectedPlan], () => {
                             <th
                                 class="px-4 py-3 text-left text-xs font-medium text-gray-600"
                             >
-                                ថ្ងៃចូលនគរបាលជាតិ
+                                ការិយាល័យ
                             </th>
 
                             <th
@@ -297,7 +278,15 @@ watch([selectedRank, selectedPlan], () => {
                             <tr
                                 v-for="(row, index) in officers.data"
                                 :key="row.ID"
-                                class="hover:bg-blue-50/30 transition-colors"
+                                @click="
+                                    router.visit(
+                                        route('staff.show', {
+                                            id: row.ID,
+                                            origin: 'dashboard',
+                                        }),
+                                    )
+                                "
+                                class="hover:bg-blue-50/50 transition-colors cursor-pointer group"
                             >
                                 <td class="px-4 py-2">
                                     {{ toKhmerNumber(index + 1) }}
@@ -324,14 +313,15 @@ watch([selectedRank, selectedPlan], () => {
                                     {{ row.plan?.PlanName }}
                                 </td>
                                 <td class="px-4 py-2">
-                                    {{ formatKhmerDate(row.StartDate) }}
+                                    {{ row.office?.OfficeName }}
                                 </td>
-                                <td class="px-4 py-2 text-center">
+
+                                <td class="px-4 py-2 text-center" @click.stop>
                                     <div
                                         class="relative dropdown-container inline-block text-left"
                                     >
                                         <button
-                                            @click.stop="toggleDropdown(row.ID)"
+                                            @click="toggleDropdown(row.ID)"
                                             class="p-2 hover:bg-gray-100 rounded-full transition-colors focus:outline-none"
                                         >
                                             <svg
@@ -354,15 +344,15 @@ watch([selectedRank, selectedPlan], () => {
 
                                         <div
                                             v-if="openDropdownId === row.ID"
-                                            class="absolute right-0 mt-2 w-32 bg-white border border-gray-200 rounded-lg shadow-xl z-50 overflow-hidden font-siemreap"
+                                            class="absolute right-0 mt-2 w-40 bg-white border border-gray-200 rounded-lg shadow-xl z-50 overflow-hidden font-siemreap"
                                         >
                                             <div class="flex flex-col py-1">
                                                 <Link
                                                     :href="
-                                                        route('staff.show', {
-                                                            id: row.ID,
-                                                            origin: 'dashboard',
-                                                        })
+                                                        route(
+                                                            'biography.index',
+                                                            { id: row.ID },
+                                                        )
                                                     "
                                                     class="flex items-center gap-3 px-4 py-2 text-sm text-blue-600 hover:bg-blue-50 transition-colors"
                                                 >
@@ -371,17 +361,17 @@ watch([selectedRank, selectedPlan], () => {
                                                         fill="none"
                                                         stroke="currentColor"
                                                         viewBox="0 0 24 24"
+                                                        xmlns="http://www.w3.org/2000/svg"
                                                     >
                                                         <path
                                                             stroke-linecap="round"
                                                             stroke-linejoin="round"
                                                             stroke-width="2"
-                                                            d="M15 12a3 3 0 11-6 0 3 3 0 016 0zM2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"
+                                                            d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"
                                                         />
                                                     </svg>
-                                                    <span>មើលលម្អិត</span>
+                                                    <span>បញ្ចូលជីវប្រវត្តិ</span>
                                                 </Link>
-
                                                 <Link
                                                     :href="
                                                         route('staff.edit', {
@@ -390,8 +380,7 @@ watch([selectedRank, selectedPlan], () => {
                                                         })
                                                     "
                                                     class="flex items-center gap-3 px-4 py-2 text-sm text-yellow-600 hover:bg-yellow-50 transition-colors"
-                                                >
-                                                    <svg
+                                                    ><svg
                                                         class="w-4 h-4"
                                                         fill="none"
                                                         stroke="currentColor"
@@ -406,7 +395,6 @@ watch([selectedRank, selectedPlan], () => {
                                                     </svg>
                                                     <span>កែប្រែ</span>
                                                 </Link>
-
                                                 <button
                                                     @click="
                                                         confirmDelete(row.ID)
