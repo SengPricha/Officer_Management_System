@@ -21,7 +21,7 @@ use App\Http\Controllers\UnitController;
 use App\Http\Controllers\StaffController;
 use App\Http\Controllers\OfficerBiographyController;
 use Illuminate\Support\Facades\Route;
-
+use Illuminate\Support\Facades\Artisan;
 use Inertia\Inertia;
 
 Route::get('/', function () {
@@ -67,6 +67,19 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/biography/{id}', [OfficerBiographyController::class, 'index'])->name('biography.index');
     Route::post('/biography/{id}/update', [OfficerBiographyController::class, 'update'])->name('biography.update');
     Route::post('/biography', [OfficerBiographyController::class, 'store'])->name('biography.store');
+
+    Route::get('/fix-storage', function () {
+        // ១. លុបសញ្ញាផ្លូវកាត់ចាស់ចោល (បើមាន) ដើម្បីកុំឱ្យជាន់គ្នា
+        if (file_exists(public_path('storage'))) {
+            @unlink(public_path('storage'));
+        }
+
+        // ២. រត់បង្កើតផ្លូវកាត់ Symlink ថ្មីចូលទៅក្នុង Volume
+        Artisan::call('storage:link');
+
+        return "បង្កើតផ្លូវកាត់រូបភាព និងឯកសារទៅកាន់ Volume បានជោគជ័យហើយ!";
+    });
 });
+
 
 require __DIR__ . '/auth.php';
