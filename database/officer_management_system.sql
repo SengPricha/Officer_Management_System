@@ -27,11 +27,11 @@ SET time_zone = "+00:00";
 -- Table structure for table `cache`
 --
 
-CREATE TABLE `cache` (
-  `key` varchar(255) NOT NULL,
-  `value` mediumtext NOT NULL,
-  `expiration` bigint(20) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+-- CREATE TABLE `cache` (
+--   `key` varchar(255) NOT NULL,
+--   `value` mediumtext NOT NULL,
+--   `expiration` bigint(20) NOT NULL
+-- ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- --------------------------------------------------------
 
@@ -39,11 +39,11 @@ CREATE TABLE `cache` (
 -- Table structure for table `cache_locks`
 --
 
-CREATE TABLE `cache_locks` (
-  `key` varchar(255) NOT NULL,
-  `owner` varchar(255) NOT NULL,
-  `expiration` bigint(20) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+-- CREATE TABLE `cache_locks` (
+--   `key` varchar(255) NOT NULL,
+--   `owner` varchar(255) NOT NULL,
+--   `expiration` bigint(20) NOT NULL
+-- ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- --------------------------------------------------------
 
@@ -51,14 +51,14 @@ CREATE TABLE `cache_locks` (
 -- Table structure for table `documents`
 --
 
-CREATE TABLE `documents` (
-  `DocID` bigint(20) UNSIGNED NOT NULL,
-  `OfficerID` bigint(20) UNSIGNED NOT NULL,
-  `FileName` varchar(255) NOT NULL,
-  `FilePath` varchar(255) NOT NULL,
-  `created_at` timestamp NULL DEFAULT NULL,
-  `updated_at` timestamp NULL DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+-- CREATE TABLE `documents` (
+--   `DocID` bigint(20) UNSIGNED NOT NULL,
+--   `OfficerID` bigint(20) UNSIGNED NOT NULL,
+--   `FileName` varchar(255) NOT NULL,
+--   `FilePath` varchar(255) NOT NULL,
+--   `created_at` timestamp NULL DEFAULT NULL,
+--   `updated_at` timestamp NULL DEFAULT NULL
+-- ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 --
 -- Dumping data for table `documents`
@@ -82,15 +82,15 @@ INSERT INTO `documents` (`DocID`, `OfficerID`, `FileName`, `FilePath`, `created_
 -- Table structure for table `failed_jobs`
 --
 
-CREATE TABLE `failed_jobs` (
-  `id` bigint(20) UNSIGNED NOT NULL,
-  `uuid` varchar(255) NOT NULL,
-  `connection` text NOT NULL,
-  `queue` text NOT NULL,
-  `payload` longtext NOT NULL,
-  `exception` longtext NOT NULL,
-  `failed_at` timestamp NOT NULL DEFAULT current_timestamp()
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+-- CREATE TABLE `failed_jobs` (
+--   `id` bigint(20) UNSIGNED NOT NULL,
+--   `uuid` varchar(255) NOT NULL,
+--   `connection` text NOT NULL,
+--   `queue` text NOT NULL,
+--   `payload` longtext NOT NULL,
+--   `exception` longtext NOT NULL,
+--   `failed_at` timestamp NOT NULL DEFAULT current_timestamp()
+-- ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- --------------------------------------------------------
 
@@ -98,15 +98,15 @@ CREATE TABLE `failed_jobs` (
 -- Table structure for table `jobs`
 --
 
-CREATE TABLE `jobs` (
-  `id` bigint(20) UNSIGNED NOT NULL,
-  `queue` varchar(255) NOT NULL,
-  `payload` longtext NOT NULL,
-  `attempts` tinyint(3) UNSIGNED NOT NULL,
-  `reserved_at` int(10) UNSIGNED DEFAULT NULL,
-  `available_at` int(10) UNSIGNED NOT NULL,
-  `created_at` int(10) UNSIGNED NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+-- CREATE TABLE `jobs` (
+--   `id` bigint(20) UNSIGNED NOT NULL,
+--   `queue` varchar(255) NOT NULL,
+--   `payload` longtext NOT NULL,
+--   `attempts` tinyint(3) UNSIGNED NOT NULL,
+--   `reserved_at` int(10) UNSIGNED DEFAULT NULL,
+--   `available_at` int(10) UNSIGNED NOT NULL,
+--   `created_at` int(10) UNSIGNED NOT NULL
+-- ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- --------------------------------------------------------
 
@@ -114,18 +114,18 @@ CREATE TABLE `jobs` (
 -- Table structure for table `job_batches`
 --
 
-CREATE TABLE `job_batches` (
-  `id` varchar(255) NOT NULL,
-  `name` varchar(255) NOT NULL,
-  `total_jobs` int(11) NOT NULL,
-  `pending_jobs` int(11) NOT NULL,
-  `failed_jobs` int(11) NOT NULL,
-  `failed_job_ids` longtext NOT NULL,
-  `options` mediumtext DEFAULT NULL,
-  `cancelled_at` int(11) DEFAULT NULL,
-  `created_at` int(11) NOT NULL,
-  `finished_at` int(11) DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+-- CREATE TABLE `job_batches` (
+--   `id` varchar(255) NOT NULL,
+--   `name` varchar(255) NOT NULL,
+--   `total_jobs` int(11) NOT NULL,
+--   `pending_jobs` int(11) NOT NULL,
+--   `failed_jobs` int(11) NOT NULL,
+--   `failed_job_ids` longtext NOT NULL,
+--   `options` mediumtext DEFAULT NULL,
+--   `cancelled_at` int(11) DEFAULT NULL,
+--   `created_at` int(11) NOT NULL,
+--   `finished_at` int(11) DEFAULT NULL
+-- ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- --------------------------------------------------------
 
@@ -133,11 +133,11 @@ CREATE TABLE `job_batches` (
 -- Table structure for table `migrations`
 --
 
-CREATE TABLE `migrations` (
-  `id` int(10) UNSIGNED NOT NULL,
-  `migration` varchar(255) NOT NULL,
-  `batch` int(11) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+-- CREATE TABLE `migrations` (
+--   `id` int(10) UNSIGNED NOT NULL,
+--   `migration` varchar(255) NOT NULL,
+--   `batch` int(11) NOT NULL
+-- ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 --
 -- Dumping data for table `migrations`
@@ -163,26 +163,26 @@ INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES
 -- Table structure for table `officers`
 --
 
-CREATE TABLE `officers` (
-  `ID` bigint(20) UNSIGNED NOT NULL,
-  `OfficerName` varchar(255) NOT NULL,
-  `Gender` varchar(255) DEFAULT NULL,
-  `DOB` date DEFAULT NULL,
-  `OfficerID_Code` varchar(255) DEFAULT NULL,
-  `StartDate` date DEFAULT NULL,
-  `ProfileImage` varchar(255) DEFAULT NULL,
-  `RankID` bigint(20) UNSIGNED NOT NULL,
-  `RoleID` bigint(20) UNSIGNED NOT NULL,
-  `StatusID` bigint(20) UNSIGNED NOT NULL,
-  `StatusNote` varchar(255) DEFAULT NULL,
-  `UnitID` bigint(20) UNSIGNED NOT NULL,
-  `PlanID` bigint(20) UNSIGNED DEFAULT NULL,
-  `OfficeID` bigint(20) UNSIGNED DEFAULT NULL,
-  `SectionID` bigint(20) UNSIGNED DEFAULT NULL,
-  `PostID` bigint(20) UNSIGNED DEFAULT NULL,
-  `created_at` timestamp NULL DEFAULT NULL,
-  `updated_at` timestamp NULL DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+-- CREATE TABLE `officers` (
+--   `ID` bigint(20) UNSIGNED NOT NULL,
+--   `OfficerName` varchar(255) NOT NULL,
+--   `Gender` varchar(255) DEFAULT NULL,
+--   `DOB` date DEFAULT NULL,
+--   `OfficerID_Code` varchar(255) DEFAULT NULL,
+--   `StartDate` date DEFAULT NULL,
+--   `ProfileImage` varchar(255) DEFAULT NULL,
+--   `RankID` bigint(20) UNSIGNED NOT NULL,
+--   `RoleID` bigint(20) UNSIGNED NOT NULL,
+--   `StatusID` bigint(20) UNSIGNED NOT NULL,
+--   `StatusNote` varchar(255) DEFAULT NULL,
+--   `UnitID` bigint(20) UNSIGNED NOT NULL,
+--   `PlanID` bigint(20) UNSIGNED DEFAULT NULL,
+--   `OfficeID` bigint(20) UNSIGNED DEFAULT NULL,
+--   `SectionID` bigint(20) UNSIGNED DEFAULT NULL,
+--   `PostID` bigint(20) UNSIGNED DEFAULT NULL,
+--   `created_at` timestamp NULL DEFAULT NULL,
+--   `updated_at` timestamp NULL DEFAULT NULL
+-- ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 --
 -- Dumping data for table `officers`
@@ -219,17 +219,17 @@ INSERT INTO `officers` (`ID`, `OfficerName`, `Gender`, `DOB`, `OfficerID_Code`, 
 -- Table structure for table `officer_biographies`
 --
 
-CREATE TABLE `officer_biographies` (
-  `id` bigint(20) UNSIGNED NOT NULL,
-  `officer_id` bigint(20) UNSIGNED NOT NULL,
-  `rank_id` bigint(20) UNSIGNED NOT NULL,
-  `role_id` bigint(20) UNSIGNED NOT NULL,
-  `biography_name` varchar(255) NOT NULL,
-  `file_path` varchar(255) DEFAULT NULL,
-  `effective_date` year(4) NOT NULL,
-  `created_at` timestamp NULL DEFAULT NULL,
-  `updated_at` timestamp NULL DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+-- CREATE TABLE `officer_biographies` (
+--   `id` bigint(20) UNSIGNED NOT NULL,
+--   `officer_id` bigint(20) UNSIGNED NOT NULL,
+--   `rank_id` bigint(20) UNSIGNED NOT NULL,
+--   `role_id` bigint(20) UNSIGNED NOT NULL,
+--   `biography_name` varchar(255) NOT NULL,
+--   `file_path` varchar(255) DEFAULT NULL,
+--   `effective_date` year(4) NOT NULL,
+--   `created_at` timestamp NULL DEFAULT NULL,
+--   `updated_at` timestamp NULL DEFAULT NULL
+-- ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 --
 -- Dumping data for table `officer_biographies`
@@ -249,13 +249,13 @@ INSERT INTO `officer_biographies` (`id`, `officer_id`, `rank_id`, `role_id`, `bi
 -- Table structure for table `offices`
 --
 
-CREATE TABLE `offices` (
-  `OfficeID` bigint(20) UNSIGNED NOT NULL,
-  `OfficeName` varchar(255) NOT NULL,
-  `PlanID` bigint(20) UNSIGNED NOT NULL,
-  `created_at` timestamp NULL DEFAULT NULL,
-  `updated_at` timestamp NULL DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+-- CREATE TABLE `offices` (
+--   `OfficeID` bigint(20) UNSIGNED NOT NULL,
+--   `OfficeName` varchar(255) NOT NULL,
+--   `PlanID` bigint(20) UNSIGNED NOT NULL,
+--   `created_at` timestamp NULL DEFAULT NULL,
+--   `updated_at` timestamp NULL DEFAULT NULL
+-- ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 --
 -- Dumping data for table `offices`
@@ -299,11 +299,11 @@ INSERT INTO `offices` (`OfficeID`, `OfficeName`, `PlanID`, `created_at`, `update
 -- Table structure for table `password_reset_tokens`
 --
 
-CREATE TABLE `password_reset_tokens` (
-  `email` varchar(255) NOT NULL,
-  `token` varchar(255) NOT NULL,
-  `created_at` timestamp NULL DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+-- CREATE TABLE `password_reset_tokens` (
+--   `email` varchar(255) NOT NULL,
+--   `token` varchar(255) NOT NULL,
+--   `created_at` timestamp NULL DEFAULT NULL
+-- ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- --------------------------------------------------------
 
@@ -311,13 +311,13 @@ CREATE TABLE `password_reset_tokens` (
 -- Table structure for table `plans`
 --
 
-CREATE TABLE `plans` (
-  `PlanID` bigint(20) UNSIGNED NOT NULL,
-  `PlanName` varchar(255) NOT NULL,
-  `UnitID` bigint(20) UNSIGNED NOT NULL,
-  `created_at` timestamp NULL DEFAULT NULL,
-  `updated_at` timestamp NULL DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+-- CREATE TABLE `plans` (
+--   `PlanID` bigint(20) UNSIGNED NOT NULL,
+--   `PlanName` varchar(255) NOT NULL,
+--   `UnitID` bigint(20) UNSIGNED NOT NULL,
+--   `created_at` timestamp NULL DEFAULT NULL,
+--   `updated_at` timestamp NULL DEFAULT NULL
+-- ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 --
 -- Dumping data for table `plans`
@@ -344,13 +344,13 @@ INSERT INTO `plans` (`PlanID`, `PlanName`, `UnitID`, `created_at`, `updated_at`)
 -- Table structure for table `posts`
 --
 
-CREATE TABLE `posts` (
-  `PostID` bigint(20) UNSIGNED NOT NULL,
-  `PostName` varchar(255) NOT NULL,
-  `UnitID` bigint(20) UNSIGNED NOT NULL,
-  `created_at` timestamp NULL DEFAULT NULL,
-  `updated_at` timestamp NULL DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+-- CREATE TABLE `posts` (
+--   `PostID` bigint(20) UNSIGNED NOT NULL,
+--   `PostName` varchar(255) NOT NULL,
+--   `UnitID` bigint(20) UNSIGNED NOT NULL,
+--   `created_at` timestamp NULL DEFAULT NULL,
+--   `updated_at` timestamp NULL DEFAULT NULL
+-- ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 --
 -- Dumping data for table `posts`
@@ -376,13 +376,13 @@ INSERT INTO `posts` (`PostID`, `PostName`, `UnitID`, `created_at`, `updated_at`)
 -- Table structure for table `ranks`
 --
 
-CREATE TABLE `ranks` (
-  `RankID` bigint(20) UNSIGNED NOT NULL,
-  `RankName` varchar(255) NOT NULL,
-  `Priority` int(11) NOT NULL DEFAULT 0,
-  `created_at` timestamp NULL DEFAULT NULL,
-  `updated_at` timestamp NULL DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+-- CREATE TABLE `ranks` (
+--   `RankID` bigint(20) UNSIGNED NOT NULL,
+--   `RankName` varchar(255) NOT NULL,
+--   `Priority` int(11) NOT NULL DEFAULT 0,
+--   `created_at` timestamp NULL DEFAULT NULL,
+--   `updated_at` timestamp NULL DEFAULT NULL
+-- ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 --
 -- Dumping data for table `ranks`
@@ -411,13 +411,13 @@ INSERT INTO `ranks` (`RankID`, `RankName`, `Priority`, `created_at`, `updated_at
 -- Table structure for table `roles`
 --
 
-CREATE TABLE `roles` (
-  `RoleID` bigint(20) UNSIGNED NOT NULL,
-  `RoleName` varchar(255) NOT NULL,
-  `Priority` int(11) NOT NULL DEFAULT 0,
-  `created_at` timestamp NULL DEFAULT NULL,
-  `updated_at` timestamp NULL DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+-- CREATE TABLE `roles` (
+--   `RoleID` bigint(20) UNSIGNED NOT NULL,
+--   `RoleName` varchar(255) NOT NULL,
+--   `Priority` int(11) NOT NULL DEFAULT 0,
+--   `created_at` timestamp NULL DEFAULT NULL,
+--   `updated_at` timestamp NULL DEFAULT NULL
+-- ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 --
 -- Dumping data for table `roles`
@@ -444,14 +444,14 @@ INSERT INTO `roles` (`RoleID`, `RoleName`, `Priority`, `created_at`, `updated_at
 -- Table structure for table `sections`
 --
 
-CREATE TABLE `sections` (
-  `SectionID` bigint(20) UNSIGNED NOT NULL,
-  `SectionName` varchar(255) NOT NULL,
-  `OfficeID` bigint(20) UNSIGNED DEFAULT NULL,
-  `UnitID` bigint(20) UNSIGNED DEFAULT NULL,
-  `created_at` timestamp NULL DEFAULT NULL,
-  `updated_at` timestamp NULL DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+-- CREATE TABLE `sections` (
+--   `SectionID` bigint(20) UNSIGNED NOT NULL,
+--   `SectionName` varchar(255) NOT NULL,
+--   `OfficeID` bigint(20) UNSIGNED DEFAULT NULL,
+--   `UnitID` bigint(20) UNSIGNED DEFAULT NULL,
+--   `created_at` timestamp NULL DEFAULT NULL,
+--   `updated_at` timestamp NULL DEFAULT NULL
+-- ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 --
 -- Dumping data for table `sections`
@@ -632,14 +632,14 @@ INSERT INTO `sections` (`SectionID`, `SectionName`, `OfficeID`, `UnitID`, `creat
 -- Table structure for table `sessions`
 --
 
-CREATE TABLE `sessions` (
-  `id` varchar(255) NOT NULL,
-  `user_id` bigint(20) UNSIGNED DEFAULT NULL,
-  `ip_address` varchar(45) DEFAULT NULL,
-  `user_agent` text DEFAULT NULL,
-  `payload` longtext NOT NULL,
-  `last_activity` int(11) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+-- CREATE TABLE `sessions` (
+--   `id` varchar(255) NOT NULL,
+--   `user_id` bigint(20) UNSIGNED DEFAULT NULL,
+--   `ip_address` varchar(45) DEFAULT NULL,
+--   `user_agent` text DEFAULT NULL,
+--   `payload` longtext NOT NULL,
+--   `last_activity` int(11) NOT NULL
+-- ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 --
 -- Dumping data for table `sessions`
@@ -654,12 +654,12 @@ INSERT INTO `sessions` (`id`, `user_id`, `ip_address`, `user_agent`, `payload`, 
 -- Table structure for table `status`
 --
 
-CREATE TABLE `status` (
-  `StatusID` bigint(20) UNSIGNED NOT NULL,
-  `StatusName` varchar(255) NOT NULL,
-  `created_at` timestamp NULL DEFAULT NULL,
-  `updated_at` timestamp NULL DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+-- CREATE TABLE `status` (
+--   `StatusID` bigint(20) UNSIGNED NOT NULL,
+--   `StatusName` varchar(255) NOT NULL,
+--   `created_at` timestamp NULL DEFAULT NULL,
+--   `updated_at` timestamp NULL DEFAULT NULL
+-- ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 --
 -- Dumping data for table `status`
@@ -685,12 +685,12 @@ INSERT INTO `status` (`StatusID`, `StatusName`, `created_at`, `updated_at`) VALU
 -- Table structure for table `units`
 --
 
-CREATE TABLE `units` (
-  `UnitID` bigint(20) UNSIGNED NOT NULL,
-  `UnitName` varchar(255) NOT NULL,
-  `created_at` timestamp NULL DEFAULT NULL,
-  `updated_at` timestamp NULL DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+-- CREATE TABLE `units` (
+--   `UnitID` bigint(20) UNSIGNED NOT NULL,
+--   `UnitName` varchar(255) NOT NULL,
+--   `created_at` timestamp NULL DEFAULT NULL,
+--   `updated_at` timestamp NULL DEFAULT NULL
+-- ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 --
 -- Dumping data for table `units`
@@ -708,17 +708,17 @@ INSERT INTO `units` (`UnitID`, `UnitName`, `created_at`, `updated_at`) VALUES
 -- Table structure for table `users`
 --
 
-CREATE TABLE `users` (
-  `id` bigint(20) UNSIGNED NOT NULL,
-  `name` varchar(255) NOT NULL,
-  `username` varchar(255) NOT NULL,
-  `email` varchar(255) NOT NULL,
-  `email_verified_at` timestamp NULL DEFAULT NULL,
-  `password` varchar(255) NOT NULL,
-  `remember_token` varchar(100) DEFAULT NULL,
-  `created_at` timestamp NULL DEFAULT NULL,
-  `updated_at` timestamp NULL DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+-- CREATE TABLE `users` (
+--   `id` bigint(20) UNSIGNED NOT NULL,
+--   `name` varchar(255) NOT NULL,
+--   `username` varchar(255) NOT NULL,
+--   `email` varchar(255) NOT NULL,
+--   `email_verified_at` timestamp NULL DEFAULT NULL,
+--   `password` varchar(255) NOT NULL,
+--   `remember_token` varchar(100) DEFAULT NULL,
+--   `created_at` timestamp NULL DEFAULT NULL,
+--   `updated_at` timestamp NULL DEFAULT NULL
+-- ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 --
 -- Dumping data for table `users`
