@@ -2,25 +2,30 @@
 
 namespace Database\Seeders;
 
-use App\Models\User;
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
-use Illuminate\Support\Facades\Hash; // ហៅមកដើម្បីបង្កើត Password សម្ងាត់
+use Illuminate\Support\Facades\DB; // ហៅមកប្រើសម្រាប់ Run SQL
+use Illuminate\Support\Facades\File; // ហៅមកប្រើសម្រាប់អានឯកសារ .sql
 
 class DatabaseSeeder extends Seeder
 {
-    use WithoutModelEvents;
-
     /**
      * Seed the application's database.
      */
     public function run(): void
     {
-        // កែប្រែត្រង់នេះឲ្យត្រូវនឹង Field ក្នុង Database របស់អ្នក
-        User::factory()->create([
-            'name'     => 'Administrator',
-            'username' => 'admin911',                // ប្រើ username សម្រាប់ Login
-            'password' => Hash::make('admin911@123$'), // បង្កើត Password លំនាំដើម
-        ]);
+        // ផ្លូវទៅកាន់ File .sql របស់អ្នក
+        $sqlPath = database_path('officer_management_system.sql');
+
+        if (File::exists($sqlPath)) {
+            // អានទិន្នន័យពីក្នុង File SQL នោះ
+            $sql = File::get($sqlPath);
+
+            // បញ្ជាឱ្យបញ្ចូល (Insert) រាល់កូដ SQL ទាំងអស់ចូលទៅក្នុង Database លើ Railway
+            DB::unprepared($sql);
+
+            $this->command->info('Imported officer_management_system.sql successfully!');
+        } else {
+            $this->command->error('File officer_management_system.sql not found.');
+        }
     }
 }
