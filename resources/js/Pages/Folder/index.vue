@@ -31,7 +31,7 @@ const officerFolders = computed(() => {
     if (!searchQuery.value) return result;
 
     return result.filter((folder) =>
-        folder.name.toLowerCase().includes(searchQuery.value.toLowerCase()),
+        folder.name.toLowerCase().includes(searchQuery.value.toLowerCase())
     );
 });
 
@@ -52,11 +52,10 @@ const deleteFile = (id) => {
     if (confirm("តើអ្នកពិតជាចង់លុបឯកសារនេះមែនទេ?")) {
         router.delete(route("documents.destroy", id), {
             onSuccess: () => {
-                // ប្រសិនបើលុបក្នុង Folder ត្រូវដកចេញពី UI ភ្លាមៗ
                 if (selectedFolder.value) {
                     selectedFolder.value.files =
                         selectedFolder.value.files.filter(
-                            (f) => f.DocID !== id,
+                            (f) => f.DocID !== id
                         );
                 }
             },
@@ -293,14 +292,18 @@ const deleteFile = (id) => {
                                 class="absolute right-0 w-36 bg-white rounded-xl shadow-xl py-2 z-10 hidden group-hover/menu:block border border-gray-100"
                             >
                                 <a
-                                    :href="'/storage/' + file.FilePath"
+                                    :href="
+                                        '/storage/' + encodeURI(file.FilePath)
+                                    "
                                     target="_blank"
                                     class="flex items-center px-4 py-2 text-xs text-gray-600 hover:bg-blue-50"
                                 >
                                     មើលឯកសារ
                                 </a>
                                 <a
-                                    :href="'/storage/' + file.FilePath"
+                                    :href="
+                                        '/storage/' + encodeURI(file.FilePath)
+                                    "
                                     download
                                     class="flex items-center px-4 py-2 text-xs text-gray-600 hover:bg-blue-50"
                                 >
@@ -322,7 +325,7 @@ const deleteFile = (id) => {
                     >
                         <img
                             v-if="isImage(file.FilePath)"
-                            :src="'/storage/' + file.FilePath"
+                            :src="'/storage/' + encodeURI(file.FilePath)"
                             class="w-full h-full object-cover rounded-lg group-hover:scale-105 transition-transform"
                         />
                         <div

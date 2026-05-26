@@ -56,6 +56,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+    Route::delete('/documents/{id}', [FolderController::class, 'destroy'])->name('documents.destroy');
 
     Route::get('/staff/create', [StaffController::class, 'create'])->name('staff.create');
     Route::post('/staff', [StaffController::class, 'store'])->name('staff.store');
@@ -68,17 +69,6 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::post('/biography/{id}/update', [OfficerBiographyController::class, 'update'])->name('biography.update');
     Route::post('/biography', [OfficerBiographyController::class, 'store'])->name('biography.store');
 
-    Route::get('/fix-storage', function () {
-        // ១. លុបសញ្ញាផ្លូវកាត់ចាស់ចោល (បើមាន) ដើម្បីកុំឱ្យជាន់គ្នា
-        if (file_exists(public_path('storage'))) {
-            @unlink(public_path('storage'));
-        }
-
-        // ២. រត់បង្កើតផ្លូវកាត់ Symlink ថ្មីចូលទៅក្នុង Volume
-        Artisan::call('storage:link');
-
-        return "បង្កើតផ្លូវកាត់រូបភាព និងឯកសារទៅកាន់ Volume បានជោគជ័យហើយ!";
-    });
 });
 
 
