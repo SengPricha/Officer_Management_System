@@ -69,7 +69,7 @@ const handleSearch = debounce(() => {
         {
             preserveState: true,
             replace: true,
-        },
+        }
     );
 }, 300);
 
@@ -119,19 +119,19 @@ watch([searchTerm, selectedOffice, selectedPlan], () => {
 <template>
     <Head title="ផ្ទាំងគ្រប់គ្រង | ស្នងការដ្ឋាននគរបាលខេត្តប៉ៃលិន" />
     <AuthenticatedLayout>
-        <div class="py-2">
+        <div class="py-4 md:py-2">
             <div
-                class="flex flex-wrap md:flex-nowrap justify-between gap-4 mb-8 font-siemreap mx-5"
+                class="flex flex-col lg:flex-row justify-between gap-4 mb-6 font-siemreap mx-4 md:mx-5"
             >
                 <div
-                    class="w-full flex flex-wrap md:flex-nowrap gap-2 items-center"
+                    class="w-full grid grid-cols-1 sm:grid-cols-2 lg:flex lg:flex-wrap items-center gap-3"
                 >
-                    <div class="relative flex-grow max-w-[550px]">
+                    <div class="relative w-full lg:max-w-[350px]">
                         <input
                             type="text"
                             v-model="searchTerm"
                             placeholder="ស្វែងរកអត្តលេខ ឬឈ្មោះមន្រ្តី..."
-                            class="w-full border border-gray-300 rounded-xl px-4 py-3.5 text-sm focus:ring-2 focus:ring-blue-400 outline-none shadow-sm transition-all"
+                            class="w-full border border-gray-300 rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-blue-400 outline-none shadow-sm transition-all"
                         />
                         <button
                             v-if="searchTerm !== ''"
@@ -156,7 +156,7 @@ watch([searchTerm, selectedOffice, selectedPlan], () => {
 
                     <select
                         v-model="selectedPlan"
-                        class="border border-gray-300 rounded-xl leading-6 px-4 py-3 text-sm focus:ring-2 focus:ring-blue-400 outline-none shadow-sm min-w-[150px]"
+                        class="w-full lg:w-auto border border-gray-300 rounded-xl leading-6 px-4 py-3 text-sm focus:ring-2 focus:ring-blue-400 outline-none shadow-sm min-w-[180px]"
                     >
                         <option value="">ជ្រើសរើសផែនទាំងអស់</option>
                         <option
@@ -170,7 +170,7 @@ watch([searchTerm, selectedOffice, selectedPlan], () => {
 
                     <select
                         v-model="selectedOffice"
-                        class="border border-gray-300 rounded-xl leading-6 px-4 py-3 text-sm focus:ring-2 focus:ring-blue-400 outline-none shadow-sm w-[300px] font-siemreap"
+                        class="w-full lg:w-auto border border-gray-300 rounded-xl leading-6 px-4 py-3 text-sm focus:ring-2 focus:ring-blue-400 outline-none shadow-sm min-w-[200px] lg:max-w-[300px] font-siemreap"
                     >
                         <option value="">ជ្រើសរើសការិយាល័យ</option>
                         <option
@@ -183,257 +183,277 @@ watch([searchTerm, selectedOffice, selectedPlan], () => {
                     </select>
                 </div>
 
-                <Link
-                    :href="route('staff.create')"
-                    class="bg-[#01AAEB] hover:bg-[#079fdb] text-white py-1 px-4 rounded-xl font-siemreap flex items-center shadow-md transition-all text-sm"
-                >
-                    <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        width="20"
-                        height="20"
-                        viewBox="0 0 24 24"
-                        class="mr-1"
+                <div class="w-full lg:w-auto flex justify-end">
+                    <Link
+                        :href="route('staff.create')"
+                        class="w-full lg:w-auto justify-center bg-[#01AAEB] hover:bg-[#079fdb] text-white py-3 lg:py-2 px-5 rounded-xl font-siemreap flex items-center shadow-md transition-all text-sm whitespace-nowrap"
                     >
-                        <path
-                            fill="currentColor"
-                            d="M19 12.998h-6v6h-2v-6H5v-2h6v-6h2v6h6z"
-                        />
-                    </svg>
-                    <span>បន្ថែមមន្ដ្រី</span>
-                </Link>
+                        <svg
+                            xmlns="http://www.w3.org/2000/xl"
+                            width="20"
+                            height="20"
+                            viewBox="0 0 24 24"
+                            class="mr-1"
+                        >
+                            <path
+                                fill="currentColor"
+                                d="M19 12.998h-6v6h-2v-6H5v-2h6v-6h2v6h6z"
+                            />
+                        </svg>
+                        <span>បន្ថែមមន្ដ្រី</span>
+                    </Link>
+                </div>
             </div>
 
             <div
-                class="bg-white p-4 rounded-xl shadow-md overflow-visible mx-5 border border-gray-100"
+                class="mx-4 md:mx-5 bg-white rounded-xl shadow-md border border-gray-100 overflow-hidden"
             >
-                <table class="min-w-full divide-y divide-gray-200">
-                    <thead class="bg-gray-100 font-moul">
-                        <tr>
-                            <th
-                                class="px-4 py-3 text-left text-xs font-medium text-gray-600"
-                            >
-                                លេខរៀង
-                            </th>
-
-                            <th
-                                class="px-4 py-3 text-left text-xs font-medium text-gray-600"
-                            >
-                                ឋានន្តរស័ក្ដិ
-                            </th>
-
-                            <th
-                                class="px-4 py-3 text-left text-xs font-medium text-gray-600"
-                            >
-                                ឈ្មោះ
-                            </th>
-
-                            <th
-                                class="px-4 py-3 text-left text-xs font-medium text-gray-600"
-                            >
-                                ភេទ
-                            </th>
-
-                            <th
-                                class="px-4 py-3 text-left text-xs font-medium text-gray-600"
-                            >
-                                ថ្ងៃខែឆ្នាំកំណើត
-                            </th>
-
-                            <th
-                                class="px-4 py-3 text-left text-xs font-medium text-gray-600"
-                            >
-                                អត្តលេខ
-                            </th>
-
-                            <th
-                                class="px-4 py-3 text-left text-xs font-medium text-gray-600"
-                            >
-                                តួនាទី
-                            </th>
-                            <th
-                                class="px-4 py-3 text-left text-xs font-medium text-gray-600"
-                            >
-                                ផែន
-                            </th>
-
-                            <th
-                                class="px-4 py-3 text-left text-xs font-medium text-gray-600"
-                            >
-                                ការិយាល័យ
-                            </th>
-
-                            <th
-                                class="px-4 py-3 text-center text-xs font-medium text-gray-600"
-                            >
-                                សកម្មភាព
-                            </th>
-                        </tr>
-                    </thead>
-                    <tbody
-                        class="bg-white divide-y divide-gray-100 font-siemreap text-[13px]"
+                <div class="overflow-x-auto w-full get-scrollbar">
+                    <table
+                        class="min-w-full divide-y divide-gray-200 inline-block lg:table"
                     >
-                        <template
-                            v-if="officers.data && officers.data.length > 0"
+                        <thead class="bg-gray-100 font-moul">
+                            <tr class="whitespace-nowrap">
+                                <th
+                                    class="px-4 py-3.5 text-left text-xs font-medium text-gray-600"
+                                >
+                                    លេខរៀង
+                                </th>
+                                <th
+                                    class="px-4 py-3.5 text-left text-xs font-medium text-gray-600"
+                                >
+                                    ឋានន្តរស័ក្ដិ
+                                </th>
+                                <th
+                                    class="px-4 py-3.5 text-left text-xs font-medium text-gray-600"
+                                >
+                                    ឈ្មោះ
+                                </th>
+                                <th
+                                    class="px-4 py-3.5 text-left text-xs font-medium text-gray-600"
+                                >
+                                    ភេទ
+                                </th>
+                                <th
+                                    class="px-4 py-3.5 text-left text-xs font-medium text-gray-600"
+                                >
+                                    ថ្ងៃខែឆ្នាំកំណើត
+                                </th>
+                                <th
+                                    class="px-4 py-3.5 text-left text-xs font-medium text-gray-600"
+                                >
+                                    អត្តលេខ
+                                </th>
+                                <th
+                                    class="px-4 py-3.5 text-left text-xs font-medium text-gray-600"
+                                >
+                                    តួនាទី
+                                </th>
+                                <th
+                                    class="px-4 py-3.5 text-left text-xs font-medium text-gray-600"
+                                >
+                                    ផែន
+                                </th>
+                                <th
+                                    class="px-4 py-3.5 text-left text-xs font-medium text-gray-600"
+                                >
+                                    ការិយាល័យ
+                                </th>
+                                <th
+                                    class="px-4 py-3.5 text-center text-xs font-medium text-gray-600"
+                                >
+                                    សកម្មភាព
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody
+                            class="bg-white divide-y divide-gray-100 font-siemreap text-[13px]"
                         >
-                            <tr
-                                v-for="(row, index) in officers.data"
-                                :key="row.ID"
-                                @click="
-                                    router.visit(
-                                        route('staff.show', {
-                                            id: row.ID,
-                                            origin: 'dashboard',
-                                        }),
-                                    )
-                                "
-                                class="hover:bg-blue-50/50 transition-colors cursor-pointer group"
+                            <template
+                                v-if="officers.data && officers.data.length > 0"
                             >
-                                <td class="px-4 py-2">
-                                    {{ toKhmerNumber(index + 1) }}
-                                </td>
-                                <td class="px-4 py-2 font-medium">
-                                    {{ row.rank?.RankName }}
-                                </td>
-                                <td class="px-4 py-2">
-                                    {{ row.OfficerName }}
-                                </td>
-                                <td class="px-4 py-2">
-                                    {{ row.Gender }}
-                                </td>
-                                <td class="px-4 py-2">
-                                    {{ formatKhmerDate(row.DOB) }}
-                                </td>
-                                <td class="px-4 py-2">
-                                    {{ toKhmerNumber(row.OfficerID_Code) }}
-                                </td>
-                                <td class="px-4 py-2">
-                                    {{ row.role?.RoleName }}
-                                </td>
-                                <td class="px-4 py-2">
-                                    {{ row.plan?.PlanName }}
-                                </td>
-                                <td class="px-4 py-2">
-                                    {{ row.office?.OfficeName }}
-                                </td>
+                                <tr
+                                    v-for="(row, index) in officers.data"
+                                    :key="row.ID"
+                                    @click="
+                                        router.visit(
+                                            route('staff.show', {
+                                                id: row.ID,
+                                                origin: 'dashboard',
+                                            })
+                                        )
+                                    "
+                                    class="hover:bg-blue-50/50 transition-colors cursor-pointer group whitespace-nowrap"
+                                >
+                                    <td class="px-4 py-3">
+                                        {{ toKhmerNumber(index + 1) }}
+                                    </td>
+                                    <td class="px-4 py-3 font-medium">
+                                        {{ row.rank?.RankName }}
+                                    </td>
+                                    <td class="px-4 py-3">
+                                        {{ row.OfficerName }}
+                                    </td>
+                                    <td class="px-4 py-3">{{ row.Gender }}</td>
+                                    <td class="px-4 py-3">
+                                        {{ formatKhmerDate(row.DOB) }}
+                                    </td>
+                                    <td class="px-4 py-3">
+                                        {{ toKhmerNumber(row.OfficerID_Code) }}
+                                    </td>
+                                    <td class="px-4 py-3">
+                                        {{ row.role?.RoleName }}
+                                    </td>
+                                    <td class="px-4 py-3">
+                                        {{ row.plan?.PlanName }}
+                                    </td>
+                                    <td class="px-4 py-3">
+                                        {{ row.office?.OfficeName }}
+                                    </td>
 
-                                <td class="px-4 py-2 text-center" @click.stop>
-                                    <div
-                                        class="relative dropdown-container inline-block text-left"
+                                    <td
+                                        class="px-4 py-3 text-center"
+                                        @click.stop
                                     >
-                                        <button
-                                            @click="toggleDropdown(row.ID)"
-                                            class="p-2 hover:bg-gray-100 rounded-full transition-colors focus:outline-none"
-                                        >
-                                            <svg
-                                                xmlns="http://www.w3.org/2000/svg"
-                                                width="20"
-                                                height="20"
-                                                viewBox="0 0 24 24"
-                                                fill="none"
-                                                stroke="currentColor"
-                                                stroke-width="2"
-                                                stroke-linecap="round"
-                                                stroke-linejoin="round"
-                                                class="text-gray-600"
-                                            >
-                                                <circle cx="12" cy="12" r="1" />
-                                                <circle cx="12" cy="5" r="1" />
-                                                <circle cx="12" cy="19" r="1" />
-                                            </svg>
-                                        </button>
-
                                         <div
-                                            v-if="openDropdownId === row.ID"
-                                            class="absolute right-0 mt-2 w-40 bg-white border border-gray-200 rounded-lg shadow-xl z-50 overflow-hidden font-siemreap"
+                                            class="relative dropdown-container inline-block text-left"
                                         >
-                                            <div class="flex flex-col py-1">
-                                                <Link
-                                                    :href="
-                                                        route(
-                                                            'biography.index',
-                                                            { id: row.ID },
-                                                        )
-                                                    "
-                                                    class="flex items-center gap-3 px-4 py-2 text-sm text-blue-600 hover:bg-blue-50 transition-colors"
+                                            <button
+                                                @click="toggleDropdown(row.ID)"
+                                                class="p-2 hover:bg-gray-100 rounded-full transition-colors focus:outline-none"
+                                            >
+                                                <svg
+                                                    xmlns="http://www.w3.org/2000/svg"
+                                                    width="20"
+                                                    height="20"
+                                                    viewBox="0 0 24 24"
+                                                    fill="none"
+                                                    stroke="currentColor"
+                                                    stroke-width="2"
+                                                    stroke-linecap="round"
+                                                    stroke-linejoin="round"
+                                                    class="text-gray-600"
                                                 >
-                                                    <svg
-                                                        class="w-4 h-4"
-                                                        fill="none"
-                                                        stroke="currentColor"
-                                                        viewBox="0 0 24 24"
-                                                        xmlns="http://www.w3.org/2000/svg"
+                                                    <circle
+                                                        cx="12"
+                                                        cy="12"
+                                                        r="1"
+                                                    />
+                                                    <circle
+                                                        cx="12"
+                                                        cy="5"
+                                                        r="1"
+                                                    />
+                                                    <circle
+                                                        cx="12"
+                                                        cy="19"
+                                                        r="1"
+                                                    />
+                                                </svg>
+                                            </button>
+
+                                            <div
+                                                v-if="openDropdownId === row.ID"
+                                                class="absolute right-0 mt-2 w-40 bg-white border border-gray-200 rounded-lg shadow-xl z-50 overflow-hidden font-siemreap"
+                                            >
+                                                <div class="flex flex-col py-1">
+                                                    <Link
+                                                        :href="
+                                                            route(
+                                                                'biography.index',
+                                                                { id: row.ID }
+                                                            )
+                                                        "
+                                                        class="flex items-center gap-3 px-4 py-2 text-sm text-blue-600 hover:bg-blue-50 transition-colors"
                                                     >
-                                                        <path
-                                                            stroke-linecap="round"
-                                                            stroke-linejoin="round"
-                                                            stroke-width="2"
-                                                            d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"
-                                                        />
-                                                    </svg>
-                                                    <span>បញ្ចូលជីវប្រវត្តិ</span>
-                                                </Link>
-                                                <Link
-                                                    :href="
-                                                        route('staff.edit', {
-                                                            id: row.ID,
-                                                            origin: 'dashboard',
-                                                        })
-                                                    "
-                                                    class="flex items-center gap-3 px-4 py-2 text-sm text-yellow-600 hover:bg-yellow-50 transition-colors"
-                                                    ><svg
-                                                        class="w-4 h-4"
-                                                        fill="none"
-                                                        stroke="currentColor"
-                                                        viewBox="0 0 24 24"
+                                                        <svg
+                                                            class="w-4 h-4"
+                                                            fill="none"
+                                                            stroke="currentColor"
+                                                            viewBox="0 0 24 24"
+                                                            xmlns="http://www.w3.org/2000/svg"
+                                                        >
+                                                            <path
+                                                                stroke-linecap="round"
+                                                                stroke-linejoin="round"
+                                                                stroke-width="2"
+                                                                d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"
+                                                            />
+                                                        </svg>
+                                                        <span
+                                                            >បញ្ចូលជីវប្រវត្តិ</span
+                                                        >
+                                                    </Link>
+                                                    <Link
+                                                        :href="
+                                                            route(
+                                                                'staff.edit',
+                                                                {
+                                                                    id: row.ID,
+                                                                    origin: 'dashboard',
+                                                                }
+                                                            )
+                                                        "
+                                                        class="flex items-center gap-3 px-4 py-2 text-sm text-yellow-600 hover:bg-yellow-50 transition-colors"
                                                     >
-                                                        <path
-                                                            stroke-linecap="round"
-                                                            stroke-linejoin="round"
-                                                            stroke-width="2"
-                                                            d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"
-                                                        />
-                                                    </svg>
-                                                    <span>កែប្រែ</span>
-                                                </Link>
-                                                <button
-                                                    @click="
-                                                        confirmDelete(row.ID)
-                                                    "
-                                                    class="flex items-center gap-3 px-4 py-2 text-sm text-red-600 hover:bg-red-50 transition-colors w-full text-left"
-                                                >
-                                                    <svg
-                                                        class="w-4 h-4"
-                                                        fill="none"
-                                                        stroke="currentColor"
-                                                        viewBox="0 0 24 24"
+                                                        <svg
+                                                            class="w-4 h-4"
+                                                            fill="none"
+                                                            stroke="currentColor"
+                                                            viewBox="0 0 24 24"
+                                                        >
+                                                            <path
+                                                                stroke-linecap="round"
+                                                                stroke-linejoin="round"
+                                                                stroke-width="2"
+                                                                d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"
+                                                            />
+                                                        </svg>
+                                                        <span>កែប្រែ</span>
+                                                    </Link>
+                                                    <button
+                                                        @click="
+                                                            confirmDelete(
+                                                                row.ID
+                                                            )
+                                                        "
+                                                        class="flex items-center gap-3 px-4 py-2 text-sm text-red-600 hover:bg-red-50 transition-colors w-full text-left"
                                                     >
-                                                        <path
-                                                            stroke-linecap="round"
-                                                            stroke-linejoin="round"
-                                                            stroke-width="2"
-                                                            d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
-                                                        />
-                                                    </svg>
-                                                    <span>លុបមន្ត្រី</span>
-                                                </button>
+                                                        <svg
+                                                            class="w-4 h-4"
+                                                            fill="none"
+                                                            stroke="currentColor"
+                                                            viewBox="0 0 24 24"
+                                                        >
+                                                            <path
+                                                                stroke-linecap="round"
+                                                                stroke-linejoin="round"
+                                                                stroke-width="2"
+                                                                d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
+                                                            />
+                                                        </svg>
+                                                        <span>លុបមន្ត្រី</span>
+                                                    </button>
+                                                </div>
                                             </div>
                                         </div>
-                                    </div>
+                                    </td>
+                                </tr>
+                            </template>
+                            <tr v-else>
+                                <td
+                                    colspan="10"
+                                    class="px-6 py-20 text-center text-gray-400"
+                                >
+                                    មិនមានទិន្នន័យមន្ត្រីក្នុងប្រព័ន្ធឡើយ។
                                 </td>
                             </tr>
-                        </template>
-                        <tr v-else>
-                            <td
-                                colspan="10"
-                                class="px-6 py-20 text-center text-gray-400"
-                            >
-                                មិនមានទិន្នន័យមន្ត្រីក្នុងប្រព័ន្ធឡើយ។
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
+                        </tbody>
+                    </table>
+                </div>
             </div>
-            <div class="mt-6">
+
+            <div class="mt-6 mx-4 md:mx-5">
                 <Pagination :links="officers.links" />
             </div>
         </div>

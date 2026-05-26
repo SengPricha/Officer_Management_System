@@ -25,7 +25,7 @@ const joiningDateInput = ref(null);
 const imageUrl = ref(
     props.officer?.ProfileImage
         ? `/storage/profiles/${props.officer.ProfileImage}`
-        : null,
+        : null
 );
 
 const form = useForm({
@@ -148,7 +148,7 @@ watch(
             form.SectionID = null;
             form.PostID = null;
         }
-    },
+    }
 );
 
 const isInitialLoad = ref(true);
@@ -160,7 +160,7 @@ watch(
             form.OfficeID = null;
             form.SectionID = null;
         }
-    },
+    }
 );
 
 watch(
@@ -169,7 +169,7 @@ watch(
         if (newVal) {
             form.PostID = null;
         }
-    },
+    }
 );
 watch(
     () => form.PostID,
@@ -177,7 +177,7 @@ watch(
         if (newVal) {
             form.SectionID = null;
         }
-    },
+    }
 );
 
 watch(
@@ -203,7 +203,7 @@ watch(
             }
         }
     },
-    { immediate: true },
+    { immediate: true }
 );
 
 onMounted(() => {
@@ -299,7 +299,7 @@ const submit = () => {
                         <div class="relative">
                             <div
                                 v-if="!imageUrl"
-                                class="w-52 h-60 rounded-xl bg-blue-300 flex items-center justify-center border-4 border-white shadow-md overflow-hidden"
+                                class="md:w-52 md:h-60 w-32 h-40 rounded-xl bg-blue-300 flex items-center justify-center border-4 border-white shadow-md overflow-hidden"
                             >
                                 <svg
                                     xmlns="http://www.w3.org/2000/svg"
@@ -398,13 +398,13 @@ const submit = () => {
                                 v-else
                                 :src="imageUrl"
                                 :key="imageUrl"
-                                class="w-52 h-60 object-cover mx-auto rounded-xl border-4 border-gray-200 shadow-md"
+                                class="md:w-52 md:h-60 w-32 h-40 object-cover mx-auto rounded-xl border-4 border-gray-200 shadow-md"
                             />
                         </div>
 
                         <label
                             for="file-upload"
-                            class="mt-6 cursor-pointer bg-[#8cc63f] hover:bg-[#7ab336] text-white px-6 py-2 rounded-xl flex items-center gap-2 transition-all shadow-sm"
+                            class="md:mt-6 mt-2 cursor-pointer bg-[#8cc63f] hover:bg-[#7ab336] text-white md:px-6 md:py-2 px-4 py-1 rounded-xl flex items-center gap-1 transition-all shadow-sm"
                         >
                             <svg
                                 xmlns="http://www.w3.org/2000/svg"
@@ -417,7 +417,7 @@ const submit = () => {
                                     d="M21 19V5c0-1.1-.9-2-2-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2M8.5 13.5l2.5 3.01L14.5 12l4.5 6H5z"
                                 />
                             </svg>
-                            <span class="font-siemreap text-sm"
+                            <span class="font-siemreap md:text-sm text-xs"
                                 >ប្តូររូបភាព</span
                             >
                         </label>
@@ -442,8 +442,8 @@ const submit = () => {
                     <h3 class="text-black mb-6 text-md pb-10 font-moul">
                         កែប្រែព័ត៌មានមន្រ្តី
                     </h3>
-                    <div class="grid grid-cols-1 gap-4 mx-20 font-siemreap">
-                        <div class="flex justify-between items-center">
+                    <div class="grid grid-cols-1 gap-4 font-siemreap">
+                        <div class="flex flex-col md:flex-row md:items-center">
                             <label class="block text-md text-gray-700 w-72"
                                 >ឋានន្ដរស័ក្ដិ*:</label
                             >
@@ -829,7 +829,7 @@ const submit = () => {
                             <div
                                 v-if="
                                     [4, 5, 6, 12].includes(
-                                        Number(form.StatusID),
+                                        Number(form.StatusID)
                                     )
                                 "
                                 class="flex flex-col md:flex-row md:items-center animate-fade-in"
@@ -852,9 +852,9 @@ const submit = () => {
                                 </div>
                             </div>
                         </div>
-                        <div class="flex justify-between items-start gap-4">
+                            <div class="flex flex-col md:flex-row md:items-center">
                             <label
-                                class="block text-md font-medium text-gray-700 w-64 mt-2 font-siemreap"
+                                class="block text-md font-medium text-gray-700 w-64 font-siemreap"
                             >
                                 សំណុំឯកសារ* :
                             </label>

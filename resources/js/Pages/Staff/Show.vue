@@ -90,12 +90,14 @@ const deleteFile = (id) => {
         <div
             class="flex justify-between items-center bg-white shadow-sm rounded-lg max-w-8xl mx-auto px-8 py-4 mb-4"
         >
-            <h2 class="text-md text-gray-800 font-moul leading-none font-medium">
+            <h2
+                class="md:text-md text-sm text-gray-800 font-moul leading-none font-medium whitespace-nowrap"
+            >
                 ព័ត៌មានលម្អិតរបស់មន្ត្រី
             </h2>
             <Link
                 :href="route(origin)"
-                class="bg-[#01AAEB] hover:bg-[#4fbbfa] text-white flex items-center gap-2 px-4 py-2 rounded-md text-sm font-siemreap transition-all"
+                class="bg-[#01AAEB] hover:bg-[#4fbbfa] opacity-0 md:opacity-100 text-white flex items-center gap-2 px-4 py-2 rounded-md text-sm font-siemreap transition-all"
             >
                 <svg
                     xmlns="http://www.w3.org/2000/svg"
@@ -130,23 +132,27 @@ const deleteFile = (id) => {
                                     ? `/storage/profiles/${officer.ProfileImage}`
                                     : '/images/default-avatar.png'
                             "
-                            class="w-48 h-56 object-cover rounded-md border border-gray-200 mb-4"
+                            class="md:w-48 md:h-56 w-28 h-36 object-cover rounded-md border border-gray-200 mb-4"
                         />
                         <div class="text-center">
                             <div class="flex justify-center gap-2 items-center">
                                 <p
-                                    class="font-siemreap text-gray-900 text-lg font-bold"
+                                    class="font-siemreap text-gray-900 md:text-lg text-sm font-bold"
                                 >
                                     {{ officer.rank?.RankName }}
                                 </p>
-                                <h1 class="font-moul text-xl text-gray-900">
+                                <h1
+                                    class="font-moul md:ext-xl text-md text-gray-900"
+                                >
                                     {{ officer.OfficerName }}
                                 </h1>
                             </div>
 
-                            <p class="font-moul text-gray-900 text-md mt-1">
+                            <p
+                                class="font-moul text-gray-900 md:text-md text-sm mt-1"
+                            >
                                 <span
-                                    class="font-siemreap text-gray-900 text-md font-bold"
+                                    class="font-siemreap text-gray-900 md:text-md text-sm font-bold"
                                     >អត្តលេខ៖</span
                                 >
                                 {{ formatKhmerNumber(officer.OfficerID_Code) }}
@@ -154,21 +160,25 @@ const deleteFile = (id) => {
                         </div>
                     </div>
 
-                    <div class="text-sm font-siemreap">
+                    <div
+                        class="md:text-sm whitespace-nowrap text-xs font-siemreap"
+                    >
                         <div
-                            class="grid grid-cols-[30%_70%] border-b border-gray-100"
+                            class="grid md:md:grid-cols-[30%_70%] grid-cols-[35%_65%] border-b border-gray-100"
                         >
                             <div
                                 class="p-3 bg-gray-50 border-r border-gray-100 text-gray-600"
                             >
                                 ភេទ៖
                             </div>
-                            <div class="p-3 text-gray-900 font-moul font-medium">
+                            <div
+                                class="p-3 text-gray-900 font-moul font-medium"
+                            >
                                 {{ officer.Gender }}
                             </div>
                         </div>
                         <div
-                            class="grid grid-cols-[30%_70%] border-b border-gray-100"
+                            class="grid md:grid-cols-[30%_70%] grid-cols-[35%_65%] border-b border-gray-100"
                         >
                             <div
                                 class="p-3 bg-gray-50 border-r border-gray-100 text-gray-600"
@@ -180,7 +190,7 @@ const deleteFile = (id) => {
                             </div>
                         </div>
                         <div
-                            class="grid grid-cols-[30%_70%] border-b border-gray-100"
+                            class="grid md:grid-cols-[30%_70%] grid-cols-[35%_65%] border-b border-gray-100"
                         >
                             <div
                                 class="p-3 bg-gray-50 border-r border-gray-100 text-gray-600"
@@ -192,7 +202,7 @@ const deleteFile = (id) => {
                             </div>
                         </div>
                         <div
-                            class="grid grid-cols-[30%_70%] border-b border-gray-100"
+                            class="grid md:grid-cols-[30%_70%] grid-cols-[35%_65%] border-b border-gray-100"
                         >
                             <div
                                 class="p-3 bg-gray-50 border-r border-gray-100 text-gray-600"
@@ -206,7 +216,7 @@ const deleteFile = (id) => {
 
                         <div
                             v-if="officer.plan"
-                            class="grid grid-cols-[30%_70%] border-b border-gray-100"
+                            class="grid md:grid-cols-[30%_70%] grid-cols-[35%_65%] border-b border-gray-100"
                         >
                             <div
                                 class="p-3 bg-gray-50 border-r border-gray-100 text-gray-600"
@@ -220,7 +230,7 @@ const deleteFile = (id) => {
 
                         <div
                             v-if="officer.office"
-                            class="grid grid-cols-[30%_70%] border-b border-gray-100"
+                            class="grid md:grid-cols-[30%_70%] grid-cols-[35%_65%] border-b border-gray-100"
                         >
                             <div
                                 class="p-3 bg-gray-50 border-r border-gray-100 text-gray-600"
@@ -234,7 +244,7 @@ const deleteFile = (id) => {
 
                         <div
                             v-if="officer.section"
-                            class="grid grid-cols-[30%_70%] border-b border-gray-100"
+                            class="grid md:grid-cols-[30%_70%] grid-cols-[35%_65%] border-b border-gray-100"
                         >
                             <div
                                 class="p-3 bg-gray-50 border-r border-gray-100 text-gray-600"
@@ -248,7 +258,7 @@ const deleteFile = (id) => {
 
                         <div
                             v-if="officer.post"
-                            class="grid grid-cols-[30%_70%] border-b border-gray-100"
+                            class="grid md:grid-cols-[30%_70%] grid-cols-[35%_65%] border-b border-gray-100"
                         >
                             <div
                                 class="p-3 bg-gray-50 border-r border-gray-100 text-gray-600"
@@ -261,7 +271,7 @@ const deleteFile = (id) => {
                         </div>
 
                         <div
-                            class="grid grid-cols-[30%_70%] border-b border-gray-100"
+                            class="grid md:grid-cols-[30%_70%] grid-cols-[35%_65%] border-b border-gray-100"
                         >
                             <div
                                 class="p-3 bg-gray-50 border-r border-gray-100 text-gray-600"
@@ -272,7 +282,9 @@ const deleteFile = (id) => {
                                 {{ formatKhmerDate(officer.StartDate) }}
                             </div>
                         </div>
-                        <div class="grid grid-cols-[30%_70%]">
+                        <div
+                            class="grid md:grid-cols-[30%_70%] grid-cols-[35%_65%]"
+                        >
                             <div
                                 class="p-3 bg-gray-50 border-r border-gray-100 text-gray-600"
                             >
@@ -296,31 +308,33 @@ const deleteFile = (id) => {
                     class="lg:col-span-7 bg-white rounded-xl shadow-sm overflow-hidden border border-gray-100"
                 >
                     <h3
-                        class="font-moul text-sm p-6 border-b text-gray-700 bg-gray-50/50"
+                        class="font-moul md:text-sm text-xs p-6 border-b text-gray-700 bg-gray-50/50"
                     >
                         ជីវប្រវត្តិ
                     </h3>
                     <div class="overflow-x-auto">
-                        <table class="w-full text-left font-siemreap">
+                        <table
+                            class="w-full text-left font-siemreap whitespace-nowrap"
+                        >
                             <thead class="bg-gray-200 border-b font-moul">
                                 <tr>
                                     <th
-                                        class="px-4 py-4 text-sm text-gray-500 font-medium text-center"
+                                        class="px-4 py-4 md:text-sm text-xs text-gray-500 font-medium text-center"
                                     >
                                         ឋានន្តរស័ក្តិ
                                     </th>
                                     <th
-                                        class="px-4 py-4 text-sm text-gray-500 font-medium text-center"
+                                        class="px-4 py-4 md:text-sm text-xs text-gray-500 font-medium text-center"
                                     >
                                         តួនាទី
                                     </th>
                                     <th
-                                        class="px-4 py-4 text-sm text-gray-500 font-medium text-center"
+                                        class="px-4 py-4 md:text-sm text-xs text-gray-500 font-medium text-center"
                                     >
                                         ឯកសារ
                                     </th>
                                     <th
-                                        class="px-4 py-4 text-sm text-gray-500 font-medium text-center"
+                                        class="px-4 py-4 md:text-sm text-xs text-gray-500 font-medium text-center"
                                     >
                                         កាលបរិច្ឆេទ
                                     </th>
@@ -334,29 +348,29 @@ const deleteFile = (id) => {
                                 >
                                     <td class="px-4 py-4 text-center">
                                         <div
-                                            class="text-sm font-medium text-gray-900"
+                                            class="md:text-sm text-xs font-medium text-gray-900"
                                         >
                                             {{ bio.rank?.RankName }}
                                         </div>
                                     </td>
                                     <td class="px-4 py-4 text-center">
-                                        <div class="text-sm text-gray-700">
+                                        <div class="md:text-sm text-xs text-gray-700">
                                             {{ bio.role?.RoleName }}
                                         </div>
                                     </td>
                                     <td class="px-4 py-4 text-center">
                                         <div
-                                            class="text-sm text-gray-900 font-siemreap"
+                                            class="md:text-sm text-xs text-gray-900 font-siemreap"
                                         >
                                             {{ bio.biography_name }}
                                         </div>
                                     </td>
                                     <td
-                                        class="px-4 py-4 text-md text-gray-600 whitespace-nowrap text-center font-siemreap"
+                                        class="px-4 py-4 md:text-sm text-xs text-gray-600 whitespace-nowrap text-center font-siemreap"
                                     >
                                         {{
                                             formatKhmerNumber(
-                                                bio.effective_date,
+                                                bio.effective_date
                                             )
                                         }}
                                     </td>
@@ -378,7 +392,7 @@ const deleteFile = (id) => {
                     class="bg-white shadow-sm border border-gray-200 rounded-lg p-6"
                 >
                     <h3
-                        class="font-moul text-sm text-gray-800 border-b pb-3 mb-6 text-start"
+                        class="font-moul md:text-sm text-xs text-gray-800 border-b pb-3 mb-6 text-start"
                     >
                         សំណុំលិខិត
                     </h3>

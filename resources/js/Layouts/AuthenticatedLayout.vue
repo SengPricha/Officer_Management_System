@@ -1,10 +1,14 @@
 <script setup>
+import { ref } from "vue";
 import Dropdown from "@/Components/Dropdown.vue";
 import DropdownLink from "@/Components/DropdownLink.vue";
 import { Link } from "@inertiajs/vue3";
 
+// បង្កើត State សម្រាប់បើកបិទ Sidebar នៅលើ Mobile
+const isSidebarOpen = ref(false);
+
 const Icons = {
-    Praise:`<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24"><rect width="24" height="24" fill="none"/><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"><path d="M12 7v14m8-10v8a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2v-8m3.5-4a1 1 0 0 1 0-5A4.8 8 0 0 1 12 7a4.8 8 0 0 1 4.5-5a1 1 0 0 1 0 5"/><rect width="18" height="4" x="3" y="7" rx="1"/></g></svg>`,
+    Praise: `<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24"><rect width="24" height="24" fill="none"/><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"><path d="M12 7v14m8-10v8a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2v-8m3.5-4a1 1 0 0 1 0-5A4.8 8 0 0 1 12 7a4.8 8 0 0 1 4.5-5a1 1 0 0 1 0 5"/><rect width="18" height="4" x="3" y="7" rx="1"/></g></svg>`,
     Search: `<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>`,
     Dashboard: `<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="7" height="9" x="3" y="3" rx="1"/><rect width="7" height="5" x="14" y="3" rx="1"/><rect width="7" height="9" x="14" y="12" rx="1"/><rect width="7" height="5" x="3" y="16" rx="1"/></svg>`,
     Structure: `<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>`,
@@ -14,7 +18,7 @@ const Icons = {
     Report: `<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="20" x2="12" y2="10"/><line x1="18" y1="20" x2="18" y2="4"/><line x1="6" y1="20" x2="6" y2="16"/></svg>`,
     Logout: `<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>`,
     In_Out: `<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24"><rect width="24" height="24" fill="none"/><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"><path d="M3.53 11.47v2.118a4.235 4.235 0 0 0 4.235 4.236H20.47M3.53 6.176h12.705a4.235 4.235 0 0 1 4.236 4.236v2.117"/><path d="m17.294 14.647l3.177 3.176L17.294 21M6.706 9.353L3.529 6.176L6.706 3"/></g></svg>`,
-    Retire: `<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24"><rect width="24" height="24" fill="none"/><path fill="currentColor" d="M18.6 6.62c-1.44 0-2.8.56-3.77 1.53L7.8 14.39c-.64.64-1.49.99-2.4.99C3.53 15.38 2 13.87 2 12s1.53-3.38 3.4-3.38c.91 0 1.76.35 2.44 1.03l1.13 1l1.53-1.34L9.22 8.2A5.37 5.37 0 0 0 5.4 6.62C2.42 6.62 0 9.04 0 12s2.42 5.38 5.4 5.38c1.44 0 2.8-.56 3.77-1.53l7.03-6.24c.64-.64 1.49-.99 2.4-.99c1.87 0 3.4 1.51 3.4 3.38s-1.53 3.38-3.4 3.38c-.9 0-1.76-.35-2.44-1.03L15 13.34l-1.5 1.34l1.28 1.12a5.4 5.4 0 0 0 3.82 1.57c2.98 0 5.4-2.41 5.4-5.37c0-3-2.42-5.38-5.4-5.38"/></svg>`,
+    Retire: `<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24"><rect width="24" height="24" fill="none"/><path fill="currentColor" d="M18.6 6.62c-1.44 0-2.8.56-3.77 1.53L7.8 14.39c-.64.64-1.49.99-2.4 .99C3.53 15.38 2 13.87 2 12s1.53-3.38 3.4-3.38c.91 0 1.76.35 2.44 1.03l1.13 1l1.53-1.34L9.22 8.2A5.37 5.37 0 0 0 5.4 6.62C2.42 6.62 0 9.04 0 12s2.42 5.38 5.4 5.38c1.44 0 2.8-.56 3.77-1.53l7.03-6.24c.64-.64 1.49-.99 2.4-.99c1.87 0 3.4 1.51 3.4 3.38s-1.53 3.38-3.4 3.38c-.9 0-1.76-.35-2.44-1.03L15 13.34l-1.5 1.34l1.28 1.12a5.4 5.4 0 0 0 3.82 1.57c2.98 0 5.4-2.41 5.4-5.37c0-3-2.42-5.38-5.4-5.38"/></svg>`,
     Death: ` <svg width="20" height="20" viewBox="0 0 64 64" fill="currentColor" stroke="currentColor">
     <path d="M32 6c-6 0-11 5-11 11 0 4 2 7 5 9l-8 20h8l6-14 6 14h8l-8-20c3-2 5-5 5-9 0-6-5-11-11-11zm0 4c4 0 7 3 7 7 0 3-2 5-4 6l-3 1-3-1c-2-1-4-3-4-6 0-4 3-7 7-7z"/>
   </svg>`,
@@ -26,32 +30,43 @@ const Icons = {
 </script>
 
 <template>
-    <div class="flex h-screen bg-gray-100 font-seimreap">
+    <div class="flex h-screen bg-gray-100 font-siemreap overflow-hidden">
+        <div
+            v-if="isSidebarOpen"
+            @click="isSidebarOpen = false"
+            class="fixed inset-0 bg-black/40 z-30 lg:hidden transition-opacity duration-300"
+        ></div>
+
         <aside
-            class="w-76 bg-white border-r border-gray-100 flex flex-col fixed h-full z-20 shadow-sm"
+            :class="[
+                isSidebarOpen ? 'translate-x-0' : '-translate-x-full',
+                'w-76 bg-white border-r border-gray-100 flex flex-col fixed h-full z-40 shadow-sm transition-transform duration-300 ease-in-out lg:translate-x-0 lg:z-20',
+            ]"
         >
             <div
-                class="flex items-center gap-1 p-2 border-b border-gray-200 bg-white h-28"
+                class="flex items-center gap-1 p-2 border-b border-gray-200 bg-white h-24 shrink-0"
             >
                 <img
                     src="/images/logo1.png"
                     alt="Logo"
-                    class="w-20 h-auto object-contain"
+                    class="w-16 h-auto object-contain"
                 />
 
                 <div class="leading-tight">
-                    <h1 class="text-[12px] text-gray-800 font-moul">
+                    <h1 class="text-[11px] text-gray-800 font-moul">
                         ស្នងការដ្ឋាននគរបាលខេត្តប៉ៃលិន
                     </h1>
                     <h2
-                        class="text-[12px] font-semibold text-gray-600 uppercase tracking-wide"
+                        class="text-[10px] font-semibold text-gray-600 uppercase tracking-wide"
                     >
                         Commission de Police Pailin
                     </h2>
                 </div>
             </div>
 
-            <nav class="flex-1 px-6 space-y-2 mt-4 font-siemreap">
+            <nav
+                class="flex-1 px-4 space-y-1.5 mt-4 overflow-y-auto custom-scrollbar"
+            >
                 <Link
                     :href="route('dashboard')"
                     :class="
@@ -59,7 +74,7 @@ const Icons = {
                             ? 'bg-[#01AAEB] text-white shadow-lg shadow-blue-100'
                             : 'text-gray-500 hover:bg-[#01AAEB] hover:text-white'
                     "
-                    class="flex items-center px-4 py-3 rounded-xl font-bold transition-all duration-300"
+                    class="flex items-center px-4 py-2.5 rounded-xl font-bold transition-all duration-300"
                 >
                     <span class="mr-3" v-html="Icons.Dashboard"></span>
                     ផ្ទាំងគ្រប់គ្រង
@@ -74,7 +89,7 @@ const Icons = {
                             ? 'bg-[#01AAEB] text-white shadow-lg shadow-blue-100'
                             : 'text-gray-500 hover:bg-[#01AAEB] hover:text-white'
                     "
-                    class="flex items-center px-4 py-3 rounded-xl font-bold transition-all duration-300"
+                    class="flex items-center px-4 py-2.5 rounded-xl font-bold transition-all duration-300"
                 >
                     <span class="mr-3" v-html="Icons.Structure"></span>
                     រចនាសម្ព័ន្ធ
@@ -86,7 +101,7 @@ const Icons = {
                             ? 'bg-[#01AAEB] text-white shadow-lg shadow-blue-100'
                             : 'text-gray-500 hover:bg-[#01AAEB] hover:text-white'
                     "
-                    class="flex items-center px-4 py-3 rounded-xl font-bold transition-all duration-300"
+                    class="flex items-center px-4 py-2.5 rounded-xl font-bold transition-all duration-300"
                 >
                     <span class="mr-3" v-html="Icons.Folder"></span>
                     សំណុំលិខិត
@@ -98,7 +113,7 @@ const Icons = {
                             ? 'bg-[#01AAEB] text-white shadow-lg shadow-blue-100'
                             : 'text-gray-500 hover:bg-[#01AAEB] hover:text-white'
                     "
-                    class="flex items-center px-4 py-3 rounded-xl font-bold transition-all duration-300"
+                    class="flex items-center px-4 py-2.5 rounded-xl font-bold transition-all duration-300"
                 >
                     <span class="mr-3" v-html="Icons.Study"></span>
                     ការងារសិក្សា
@@ -110,7 +125,7 @@ const Icons = {
                             ? 'bg-[#01AAEB] text-white shadow-lg shadow-blue-100'
                             : 'text-gray-500 hover:bg-[#01AAEB] hover:text-white'
                     "
-                    class="flex items-center px-4 py-3 rounded-xl font-bold transition-all duration-300"
+                    class="flex items-center px-4 py-2.5 rounded-xl font-bold transition-all duration-300"
                 >
                     <span class="mr-3" v-html="Icons.Praise"></span>
                     លើកសរសើរ
@@ -123,7 +138,7 @@ const Icons = {
                             ? 'bg-[#01AAEB] text-white shadow-lg shadow-blue-100'
                             : 'text-gray-500 hover:bg-[#01AAEB] hover:text-white'
                     "
-                    class="flex items-center px-4 py-3 rounded-xl font-bold transition-all duration-300"
+                    class="flex items-center px-4 py-2.5 rounded-xl font-bold transition-all duration-300"
                 >
                     <span class="mr-3" v-html="Icons.Discipline"></span>វិន័យ
                 </Link>
@@ -134,7 +149,7 @@ const Icons = {
                             ? 'bg-[#01AAEB] text-white shadow-lg shadow-blue-100'
                             : 'text-gray-500 hover:bg-[#01AAEB] hover:text-white'
                     "
-                    class="flex items-center px-4 py-3 rounded-xl font-bold transition-all duration-300"
+                    class="flex items-center px-4 py-2.5 rounded-xl font-bold transition-all duration-300"
                 >
                     <span class="mr-3" v-html="Icons.In_Out"></span>
                     ផ្ទេរចូល
@@ -146,7 +161,7 @@ const Icons = {
                             ? 'bg-[#01AAEB] text-white shadow-lg shadow-blue-100'
                             : 'text-gray-500 hover:bg-[#01AAEB] hover:text-white'
                     "
-                    class="flex items-center px-4 py-3 rounded-xl font-bold transition-all duration-300"
+                    class="flex items-center px-4 py-2.5 rounded-xl font-bold transition-all duration-300"
                 >
                     <span class="mr-3" v-html="Icons.In_Out"></span>
                     ផ្ទេរចេញ
@@ -158,7 +173,7 @@ const Icons = {
                             ? 'bg-[#01AAEB] text-white shadow-lg shadow-blue-100'
                             : 'text-gray-500 hover:bg-[#01AAEB] hover:text-white'
                     "
-                    class="flex items-center px-4 py-3 rounded-xl font-bold transition-all duration-300"
+                    class="flex items-center px-4 py-2.5 rounded-xl font-bold transition-all duration-300"
                 >
                     <span class="mr-3" v-html="Icons.Report"></span>
                     ព្យួរក្របខណ្ឌ
@@ -170,7 +185,7 @@ const Icons = {
                             ? 'bg-[#01AAEB] text-white shadow-lg shadow-blue-100'
                             : 'text-gray-500 hover:bg-[#01AAEB] hover:text-white'
                     "
-                    class="flex items-center px-4 py-3 rounded-xl font-bold transition-all duration-300"
+                    class="flex items-center px-4 py-2.5 rounded-xl font-bold transition-all duration-300"
                 >
                     <span class="mr-3" v-html="Icons.Disabled"></span>
                     ពិការ/បាត់បង់សមត្ថភាព
@@ -182,10 +197,10 @@ const Icons = {
                             ? 'bg-[#01AAEB] text-white shadow-lg shadow-blue-100'
                             : 'text-gray-500 hover:bg-[#01AAEB] hover:text-white'
                     "
-                    class="flex items-center px-4 py-3 rounded-xl font-bold transition-all duration-300"
+                    class="flex items-center px-4 py-2.5 rounded-xl font-bold transition-all duration-300"
                 >
                     <span class="mr-3" v-html="Icons.Dismissed"></span>
-                    កាត់/បណ្ដេញចេញពីក្របខណ្ឌ
+                    កាត់/បណ្ដេញចេញ
                 </Link>
                 <Link
                     :href="route('retired.index')"
@@ -194,7 +209,7 @@ const Icons = {
                             ? 'bg-[#01AAEB] text-white shadow-lg shadow-blue-100'
                             : 'text-gray-500 hover:bg-[#01AAEB] hover:text-white'
                     "
-                    class="flex items-center px-4 py-3 rounded-xl font-bold transition-all duration-300"
+                    class="flex items-center px-4 py-2.5 rounded-xl font-bold transition-all duration-300"
                 >
                     <span class="mr-3" v-html="Icons.Retire"></span>
                     សោធននិវត្តន៍
@@ -206,19 +221,19 @@ const Icons = {
                             ? 'bg-[#01AAEB] text-white shadow-lg shadow-blue-100'
                             : 'text-gray-500 hover:bg-[#01AAEB] hover:text-white'
                     "
-                    class="flex items-center px-4 py-3 rounded-xl font-bold transition-all duration-300"
+                    class="flex items-center px-4 py-2.5 rounded-xl font-bold transition-all duration-300"
                 >
                     <span class="mr-3" v-html="Icons.Death"></span>
                     មរណៈ
                 </Link>
             </nav>
 
-            <div class="p-6 border-t border-gray-200">
+            <div class="p-4 border-t border-gray-200 shrink-0">
                 <Link
                     :href="route('logout')"
                     method="post"
                     as="button"
-                    class="w-full flex items-center justify-center px-4 py-3 bg-red-500 font-siemreap text-white text-sm hover:bg-red-400 rounded-xl transition-all"
+                    class="w-full flex items-center justify-center px-4 py-2.5 bg-red-500 text-white text-sm hover:bg-red-400 rounded-xl transition-all"
                 >
                     <span class="mr-3" v-html="Icons.Logout"></span>
                     ចាកចេញពីប្រព័ន្ធ
@@ -226,13 +241,38 @@ const Icons = {
             </div>
         </aside>
 
-        <div class="flex-1 flex flex-col overflow-hidden">
+        <div class="flex-1 flex flex-col overflow-hidden lg:pl-76">
             <header
-                class="bg-white shadow-sm h-28 flex items-center justify-between px-8"
+                class="bg-white shadow-sm h-24 flex items-center justify-between px-4 md:px-8 shrink-0"
             >
-                <h2 class="text-xl font-bold text-gray-700">
-                    <slot name="header" />
-                </h2>
+                <div class="flex items-center gap-3">
+                    <button
+                        @click="isSidebarOpen = true"
+                        class="p-2 rounded-lg text-gray-600 hover:bg-gray-100 lg:hidden focus:outline-none"
+                    >
+                        <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            width="24"
+                            height="24"
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            stroke="currentColor"
+                            stroke-width="2"
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                        >
+                            <line x1="4" x2="20" y1="12" y2="12" />
+                            <line x1="4" x2="20" y1="6" y2="6" />
+                            <line x1="4" x2="20" y1="18" y2="18" />
+                        </svg>
+                    </button>
+
+                    <h2
+                        class="text-lg md:text-xl font-bold text-gray-700 truncate max-w-[200px] sm:max-w-none"
+                    >
+                        <slot name="header" />
+                    </h2>
+                </div>
 
                 <div class="flex items-center">
                     <Dropdown align="right" width="48">
@@ -240,9 +280,11 @@ const Icons = {
                             <button
                                 class="flex items-center text-sm font-medium text-gray-500 hover:text-gray-700 focus:outline-none transition"
                             >
-                                {{ $page.props.auth.user.name }}
+                                <span class="max-w-[100px] truncate block">{{
+                                    $page.props.auth.user.name
+                                }}</span>
                                 <svg
-                                    class="ml-2 -mr-0.5 h-4 w-4"
+                                    class="ml-1.5 h-4 w-4 shrink-0"
                                     fill="currentColor"
                                     viewBox="0 0 20 20"
                                 >
@@ -273,10 +315,27 @@ const Icons = {
             </header>
 
             <main
-                class="flex-1 overflow-x-hidden overflow-y-auto bg-gray-100 p-5 ml-[300px]"
+                class="flex-1 overflow-x-hidden overflow-y-auto bg-gray-100 p-4 md:p-6 ml-0 md:ml-[280px]"
             >
                 <slot />
             </main>
         </div>
     </div>
 </template>
+
+<style scoped>
+/* ជំនួយបន្ថែម៖ ធ្វើឱ្យ Scrollbar របស់ Menu មើលទៅស្អាត និងតូច */
+.custom-scrollbar::-webkit-scrollbar {
+    width: 4px;
+}
+.custom-scrollbar::-webkit-scrollbar-track {
+    background: transparent;
+}
+.custom-scrollbar::-webkit-scrollbar-thumb {
+    background: #cbd5e1;
+    border-radius: 10px;
+}
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+    background: #94a3b8;
+}
+</style>

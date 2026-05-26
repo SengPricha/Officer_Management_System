@@ -106,9 +106,9 @@ const submit = () => {
 <template>
     <Head title="បញ្ចូលជីវប្រវត្តិមន្រ្តី | ស្នងការដ្ឋាននគរបាលខេត្តប៉ៃលិន" />
     <AuthenticatedLayout>
-        <div class="p-6">
+        <div class="md:p-6 p-1">
             <div class="flex justify-between items-center mb-8">
-                <div class="flex items-center gap-2 mx-5">
+                <div class="flex items-center gap-2 md:mx-5 mx-0">
                     <span class="font-siemreap font-bold text-gray-900">
                         {{ officer.rank?.RankName }}
                     </span>
@@ -118,7 +118,7 @@ const submit = () => {
                 </div>
                 <button
                     @click="goBack"
-                    class="bg-[#01AAEB] hover:bg-[#4fbbfa] text-white flex items-center gap-2 px-4 py-2 rounded-md text-sm font-siemreap transition-all"
+                    class="bg-[#01AAEB] hover:bg-[#4fbbfa] opacity-0 md:opacity-100 text-white flex items-center gap-2 px-4 py-2 rounded-md text-sm font-siemreap transition-all"
                 >
                     <svg
                         xmlns="http://www.w3.org/2000/svg"
@@ -149,9 +149,9 @@ const submit = () => {
 
                     <form
                         @submit.prevent="submit"
-                        class="flex flex-col gap-4 font-siemreap px-5"
+                        class="flex flex-col gap-4 font-siemreap md:px-5 px-0"
                     >
-                        <div class="flex justify-between items-center">
+                        <div class="flex flex-col md:flex-row md:items-center">
                             <label class="block text-sm text-gray-700 w-60"
                                 >ឋានន្តរស័ក្តិ*:</label
                             >
@@ -188,7 +188,7 @@ const submit = () => {
                                 </p>
                             </div>
                         </div>
-                        <div class="flex justify-between items-center">
+                        <div class="flex flex-col md:flex-row md:items-center">
                             <label class="block text-sm text-gray-700 w-60"
                                 >តួនាទី*:</label
                             >
@@ -222,7 +222,7 @@ const submit = () => {
                                 </p>
                             </div>
                         </div>
-                        <div class="flex justify-between items-center">
+                        <div class="flex flex-col md:flex-row md:items-center">
                             <label class="block text-sm text-gray-700 w-60"
                                 >ឈ្មោះឯកសារ*:</label
                             >
@@ -242,7 +242,7 @@ const submit = () => {
                             </div>
                         </div>
 
-                        <div class="flex justify-between items-center">
+                        <div class="flex flex-col md:flex-row md:items-center">
                             <label class="block text-sm text-gray-700 w-60"
                                 >កាលបរិច្ឆេទ*:</label
                             >
@@ -264,7 +264,7 @@ const submit = () => {
                         </div>
 
                         <div
-                            class="flex justify-between items-start gap-4 font-siemreap mt-2"
+                            class="flex flex-col md:flex-row md:items-start gap-4 font-siemreap"
                         >
                             <label
                                 class="block text-sm font-medium text-gray-700 w-36 mt-2"
@@ -405,36 +405,36 @@ const submit = () => {
                     class="lg:col-span-7 bg-white rounded-xl shadow-sm overflow-hidden border border-gray-100"
                 >
                     <h3
-                        class="font-moul text-sm p-6 border-b text-gray-700 bg-gray-50/50"
+                        class="font-moul md:text-sm text-xs p-6 border-b text-gray-700 bg-gray-50/50"
                     >
                         ជីវប្រវត្តិ
                     </h3>
-                    <div class="overflow-visible">
-                        <table class="w-full text-left font-siemreap">
+                    <div class="md:overflow-visible overflow-x-auto get-scrollbar">
+                        <table class="w-full text-left font-siemreap whitespace-nowrap">
                             <thead class="bg-gray-200 border-b font-moul">
                                 <tr>
                                     <th
-                                        class="px-4 py-4 text-sm text-gray-500 font-medium text-center"
+                                        class="px-4 py-4 md:text-sm text-xs text-gray-500 font-medium text-center"
                                     >
                                         ឋានន្តរស័ក្តិ
                                     </th>
                                     <th
-                                        class="px-4 py-4 text-sm text-gray-500 font-medium text-center"
+                                        class="px-4 py-4 md:text-sm text-xs text-gray-500 font-medium text-center"
                                     >
                                         តួនាទី
                                     </th>
                                     <th
-                                        class="px-4 py-4 text-sm text-gray-500 font-medium text-center"
+                                        class="px-4 py-4 md:text-sm text-xs text-gray-500 font-medium text-center"
                                     >
                                         ឯកសារ
                                     </th>
                                     <th
-                                        class="px-4 py-4 text-sm text-gray-500 font-medium text-center"
+                                        class="px-4 py-4 md:text-sm text-xs text-gray-500 font-medium text-center"
                                     >
                                         កាលបរិច្ឆេទ
                                     </th>
                                     <th
-                                        class="px-4 py-4 text-sm text-gray-500 font-medium text-center"
+                                        class="px-4 py-4 md:text-sm text-xs text-gray-500 font-medium text-center"
                                     >
                                         ផ្សេងៗ
                                     </th>
@@ -448,25 +448,25 @@ const submit = () => {
                                 >
                                     <td class="px-4 py-4 text-center">
                                         <div
-                                            class="text-sm font-medium text-gray-900"
+                                            class="md:text-sm text-[10px] font-medium text-gray-900"
                                         >
                                             {{ bio.rank?.RankName }}
                                         </div>
                                     </td>
                                     <td class="px-4 py-4 text-center">
-                                        <div class="text-sm text-gray-700">
+                                        <div class="md:text-sm text-[10px] text-gray-700">
                                             {{ bio.role?.RoleName }}
                                         </div>
                                     </td>
                                     <td class="px-4 py-4 text-center">
                                         <div
-                                            class="text-sm text-gray-900 font-siemreap"
+                                            class="md:text-sm text-[10px] text-gray-900 font-siemreap"
                                         >
                                             {{ bio.biography_name }}
                                         </div>
                                     </td>
                                     <td
-                                        class="px-4 py-4 text-md text-gray-600 whitespace-nowrap text-center font-siemreap"
+                                        class="px-4 py-4 md:text-sm text-[10px] text-gray-600 whitespace-nowrap text-center font-siemreap"
                                     >
                                         {{ toKhmerNumbers(bio.effective_date) }}
                                     </td>
@@ -489,7 +489,7 @@ const submit = () => {
                                                     d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"
                                                 />
                                             </svg>
-                                            <span class="text-xs font-medium"
+                                            <span class="md:text-sm text-[10px] font-medium"
                                                 >កែប្រែ</span
                                             >
                                         </button>
