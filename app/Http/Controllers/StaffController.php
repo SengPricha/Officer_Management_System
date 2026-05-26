@@ -119,19 +119,16 @@ class StaffController extends Controller
                 if ($request->hasFile('documents')) {
                     foreach ($request->file('documents') as $file) {
                         $originalName = $file->getClientOriginalName();
-                        $extension    = $file->getClientOriginalExtension();
+                        $extension    = $file->extension();
                         $filenameOnly = pathinfo($originalName, PATHINFO_FILENAME);
 
-                        $finalName = $originalName;
-                        $counter = 1;
-                        while (Storage::disk('public')->exists('documents/' . $finalName)) {
-                            $finalName = $filenameOnly . " ($counter)." . $extension;
-                            $counter++;
-                        }
-                        $path = $file->storeAs('documents', $finalName, 'public');
+                        $safeName = 'doc_' . time() . '_' . uniqid() . '.' . $extension;
+
+                        // រក្សាទុកទៅក្នុង Folder documents តែមួយគត់
+                        $path = $file->storeAs('documents', $safeName, 'public');
                         Document::create([
                             'OfficerID' => $officer->ID,
-                            'FileName'  => $finalName,
+                            'FileName'  => $originalName,
                             'FilePath'  => $path
                         ]);
                     }
@@ -204,16 +201,20 @@ class StaffController extends Controller
     public function destroy(int $id)
     {
         $officer = Officer::with('documents')->findOrFail($id);
-        foreach ($officer->documents as $doc) {
-            Storage::delete('public/documents/' . $doc->FileName);
-            $doc->delete($id);
-        }
-        $officer->delete($id);
 
+        foreach ($officer->documents as $doc) {
+            // លុបឯកសារពិតប្រាកដចេញពី Storage
+            if (Storage::disk('public')->exists($doc->FilePath)) {
+                Storage::disk('public')->delete($doc->FilePath);
+            }
+
+            Document::destroy($doc->DocumentID ?? $doc->id);
+        }
+        Officer::destroy($id);
         return redirect()->route('dashboard')->with('success', 'ទិន្នន័យមន្ត្រីត្រូវបានលុបដោយជោគជ័យ');
     }
 
-    public function edit(Request $request,int $id)
+    public function edit(Request $request, int $id)
     {
         $officer = Officer::findOrFail($id);
         $officer = Officer::with('documents')->findOrFail($id);
@@ -248,7 +249,7 @@ class StaffController extends Controller
         ]);
     }
 
-    public function update(Request $request,int $id)
+    public function update(Request $request, int $id)
     {
         $officer = Officer::findOrFail($id);
 
@@ -294,10 +295,15 @@ class StaffController extends Controller
         $officer->update($data);
         if ($request->hasFile('documents')) {
             foreach ($request->file('documents') as $file) {
-                $path = $file->store('officer_documents', 'public');
+                $originalName = $file->getClientOriginalName();
+                $extension    = $file->extension();
+
+                $safeName = 'doc_' . time() . '_' . uniqid() . '.' . $extension;
+                $path = $file->storeAs('documents', $safeName, 'public');
+
                 $officer->documents()->create([
+                    'FileName' => $originalName,
                     'FilePath' => $path,
-                    'FileName' => $file->getClientOriginalName(),
                 ]);
             }
         }
