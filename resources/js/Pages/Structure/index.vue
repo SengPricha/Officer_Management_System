@@ -30,7 +30,7 @@ const toKhmerNum = (num) => {
     <AuthenticatedLayout>
         <div class="p-6 bg-gray-50 min-h-screen font-siemreap text-gray-800">
             <h2
-                class="text-xl font-moul mb-6 text-black border-b-2 border-gray-200 pb-2"
+                class="md:text-xl text-sm font-moul mb-6 text-black border-b-2 border-gray-200 pb-2"
             >
                 រចនាសម្ព័ន្ធស្នងការដ្ឋាននគរបាលខេត្តប៉ៃលិន
             </h2>
@@ -48,7 +48,7 @@ const toKhmerNum = (num) => {
                         <Link
                             :href="route('unit.show', { unit: unit.UnitID })"
                             @click.stop
-                            class="font-bold text-lg text-gray-800 hover:text-[#01AAEB] hover:underline flex-grow"
+                            class="font-bold md:text-lg text-sm text-gray-800 hover:text-[#01AAEB] hover:underline flex-grow"
                         >
                             {{ toRoman(index) }}. {{ unit.UnitName }}
                         </Link>
@@ -149,7 +149,7 @@ const toKhmerNum = (num) => {
                                         })
                                     "
                                     @click.stop
-                                    class="font-medium text-[#01AAEB] hover:text-[#01a9ebdc] hover:underline flex-grow"
+                                    class="font-medium text-sm md:text-base text-[#01AAEB] hover:text-[#01a9ebdc] hover:underline flex-grow"
                                 >
                                     {{ toKhmerNum(plan.PlanID) }}-{{
                                         plan.PlanName
@@ -241,7 +241,7 @@ const toKhmerNum = (num) => {
                                                 })
                                             "
                                             @click.stop
-                                            class="text-sm font-bold text-gray-700 hover:text-blue-600 hover:underline"
+                                            class="text-xs md:text-base font-bold text-gray-700 hover:text-blue-600 hover:underline"
                                         >
                                             📁 {{ office.OfficeName }}
                                         </Link>

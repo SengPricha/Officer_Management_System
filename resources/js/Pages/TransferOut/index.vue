@@ -60,7 +60,7 @@ const handleSearch = debounce(() => {
         {
             preserveState: true,
             replace: true,
-        },
+        }
     );
 }, 300);
 
@@ -110,7 +110,9 @@ watch([searchTerm], () => {
     <Head title="ការផ្ទេរចេញ | ស្នងការដ្ឋាននគរបាលខេត្តប៉ៃលិន" />
     <AuthenticatedLayout>
         <div class="py-2">
-            <div class="flex justify-between mb-8 font-siemreap mx-5">
+            <div
+                class="flex flex-col lg:flex-row justify-between gap-4 mb-6 font-siemreap mx-4 md:mx-5"
+            >
                 <div class="w-1/2 bg-white py-3.5 px-2 rounded-lg">
                     <h1 class="font-siemreap text-md font-bold">
                         បញ្ជីឈ្មោះមន្ត្រីការផ្ទេរចេញ
@@ -146,9 +148,9 @@ watch([searchTerm], () => {
             </div>
 
             <div
-                class="bg-white p-4 rounded-xl shadow-md mt-4 overflow-visible mx-5 border border-gray-100"
+                class="bg-white p-4 rounded-xl shadow-md mt-4 overflow-x-auto md:overflow-x-visible mx-5 border border-gray-100"
             >
-                <table class="min-w-full divide-y divide-gray-200">
+                <table class="min-w-full divide-y divide-gray-200 whitespace-nowrap">
                     <thead class="bg-gray-50 font-moul">
                         <tr>
                             <th
@@ -226,7 +228,7 @@ watch([searchTerm], () => {
                                         route('staff.show', {
                                             id: row.ID,
                                             origin: 'transferout.index',
-                                        }),
+                                        })
                                     )
                                 "
                                 class="hover:bg-blue-50/50 transition-colors cursor-pointer group"
@@ -304,7 +306,7 @@ watch([searchTerm], () => {
                                                     :href="
                                                         route(
                                                             'biography.index',
-                                                            { id: row.ID },
+                                                            { id: row.ID }
                                                         )
                                                     "
                                                     class="flex items-center gap-3 px-4 py-2 text-sm text-blue-600 hover:bg-blue-50 transition-colors"

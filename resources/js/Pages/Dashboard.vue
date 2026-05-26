@@ -206,13 +206,13 @@ watch([searchTerm, selectedOffice, selectedPlan], () => {
             </div>
 
             <div
-                class="mx-4 md:mx-5 bg-white rounded-xl shadow-md border border-gray-100 overflow-hidden"
+                class="mx-4 md:mx-5 bg-white rounded-xl shadow-md border border-gray-100 get-scrollbar overflow-x-auto md:overflow-x-visible"
             >
-                <div class="overflow-x-auto w-full get-scrollbar">
+                <div class="w-full">
                     <table
                         class="min-w-full divide-y divide-gray-200 inline-block lg:table"
                     >
-                        <thead class="bg-gray-100 font-moul">
+                        <thead class="bg-gray-200 font-moul">
                             <tr class="whitespace-nowrap">
                                 <th
                                     class="px-4 py-3.5 text-left text-xs font-medium text-gray-600"
@@ -354,7 +354,7 @@ watch([searchTerm, selectedOffice, selectedPlan], () => {
 
                                             <div
                                                 v-if="openDropdownId === row.ID"
-                                                class="absolute right-0 mt-2 w-40 bg-white border border-gray-200 rounded-lg shadow-xl z-50 overflow-hidden font-siemreap"
+                                                class="absolute right-0 mt-2 w-40 bg-white border border-gray-200 rounded-lg shadow-xl z-50 font-siemreap"
                                             >
                                                 <div class="flex flex-col py-1">
                                                     <Link
