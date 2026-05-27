@@ -44,7 +44,7 @@ const form = useForm({
     StartDate: "",
     StatusID: "",
     StatusNote: "",
-    profile_image: null,
+    ProfileImage: null,
     documents: [],
 });
 
@@ -198,8 +198,8 @@ watch(
             form.StartDate = newVal.StartDate || "";
             form.StatusID = newVal.StatusID || "";
             form.StatusNote = newVal.StatusNote || "";
-            if (newVal.profile_image) {
-                imageUrl.value = `/storage/profiles/${newVal.profile_image}`;
+            if (newVal.ProfileImage) {
+                imageUrl.value = `/storage/profiles/${newVal.ProfileImage}`;
             }
         }
     },
@@ -238,7 +238,7 @@ onMounted(() => {
 const showPreview = (event) => {
     const file = event.target.files[0];
     if (file) {
-        form.profile_image = file; //  កែពី form.ProfileImage ទៅជា form.profile_image (អក្សរតូច)
+        form.ProfileImage = file;
         imageUrl.value = URL.createObjectURL(file);
     }
 };
@@ -431,10 +431,10 @@ const submit = () => {
                         />
 
                         <p
-                            v-if="form.errors.profile_image"
+                            v-if="form.errors.ProfileImage"
                             class="text-red-500 text-xs mt-2 font-siemreap"
                         >
-                            {{ form.errors.profile_image }}
+                            {{ form.errors.ProfileImage }}
                         </p>
                     </div>
                 </div>

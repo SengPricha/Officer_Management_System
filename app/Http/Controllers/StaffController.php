@@ -271,7 +271,7 @@ class StaffController extends Controller
             'StartDate'      => 'required|date',
             'StatusID'       => 'required',
             'StatusNote'     => 'required_if:StatusID,4,5,6,12|max:255',
-            'profile_image'  => 'nullable|image|mimes:jpg,jpeg,png|max:2048', //  កែជាអក្សរតូចឱ្យត្រូវនឹង FormData របស់ Vue
+            'ProfileImage'   => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
             'UnitID'         => 'required|exists:units,UnitID',
             'PlanID'         => 'nullable|exists:plans,PlanID',
             'OfficeID'       => 'nullable|exists:offices,OfficeID',
@@ -286,30 +286,21 @@ class StaffController extends Controller
             $data['StatusNote'] = $request->StatusNote;
         }
 
-        //  កែទៅជា 'profile_image' (អក្សរតូច) ដើម្បីចាប់ឯកសារដែលផ្ញើមកពី Vue ឱ្យបានពិតប្រាកដ
-        if ($request->hasFile('profile_image')) {
-            // លុបរូបភាពចាស់ពិតប្រាកដចេញពី Volume (បើមាន)
+        if ($request->hasFile('ProfileImage')) {
             if (!empty($officer->ProfileImage)) {
                 $oldPath = 'profiles/' . $officer->ProfileImage;
                 if (Storage::disk('public')->exists($oldPath)) {
                     Storage::disk('public')->delete($oldPath);
                 }
             }
-
-            $file = $request->file('profile_image');
-            $filename = time() . '_' . uniqid() . '.' . $file->extension(); // ប្រើ extension() ចាប់យកប្រភេទសាច់ File ពិតៗ
+            $file = $request->file('ProfileImage');
+            $filename = time() . '_' . $file->getClientOriginalName();
             $file->storeAs('profiles', $filename, 'public');
-
-            // រក្សាទុកចូលក្នុង Array $data ដើម្បី Update ទៅកាន់ Column 'ProfileImage' ក្នុង DB
             $data['ProfileImage'] = $filename;
         } else {
-            // បើមិនមានការដូររូបភាពទេ ឱ្យរក្សាឈ្មោះក្នុង DB នៅដដែល
             $data['ProfileImage'] = $officer->ProfileImage;
         }
-
-        // ធ្វើការ Update ទិន្នន័យមន្ត្រីចូល Database
         $officer->update($data);
-
         if ($request->hasFile('documents')) {
             foreach ($request->file('documents') as $file) {
                 $originalName = $file->getClientOriginalName();
