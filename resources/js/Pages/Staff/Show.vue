@@ -128,8 +128,8 @@ const deleteFile = (id) => {
                     >
                         <img
                             :src="
-                                officer.ProfileImage
-                                    ? `/storage/profiles/${officer.ProfileImage}`
+                                officer.profile_image
+                                    ? `/storage/profiles/${officer.profile_image}`
                                     : '/images/default-avatar.png'
                             "
                             class="md:w-48 md:h-56 w-28 h-36 object-cover rounded-md border border-gray-200 mb-4"
