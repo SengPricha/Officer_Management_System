@@ -19,47 +19,40 @@ use Inertia\Inertia;
 
 class StaffController extends Controller
 {
-
     public function create()
     {
         return Inertia::render('Staff/Create', [
             'ranks' => Rank::orderBy('Priority', 'asc')->get()->map(fn($r) => ['id' => $r->RankID, 'name' => $r->RankName]),
-
             'units' => Unit::orderBy('UnitID', 'asc')->get()->map(fn($u) => ['id' => $u->UnitID, 'name' => $u->UnitName]),
-
             'roles' => Role::orderBy('Priority', 'asc')->get()->map(fn($ro) => ['id' => $ro->RoleID, 'name' => $ro->RoleName]),
-
             'plans' => Plan::orderBy('PlanID', 'asc')->get()->map(fn($p) => [
                 'id' => $p->PlanID,
                 'name' => $p->PlanName,
                 'unit_id' => $p->UnitID
             ]),
-
             'offices' => Office::orderBy('OfficeID', 'asc')->get()->map(fn($o) => [
                 'id' => $o->OfficeID,
                 'name' => $o->OfficeName,
                 'plan_id' => $o->PlanID
             ]),
-
             'sections' => Section::orderBy('SectionID', 'asc')->get()->map(fn($s) => [
                 'id' => $s->SectionID,
                 'name' => $s->SectionName,
                 'office_id' => $s->OfficeID,
                 'unit_id' => $s->UnitID
             ]),
-
             'posts' => Post::orderBy('PostID', 'asc')->get()->map(fn($po) => [
                 'id' => $po->PostID,
                 'name' => $po->PostName,
                 'unit_id' => $po->UnitID
             ]),
-
             'statuses' => Status::orderBy('StatusID', 'asc')->get()->map(fn($st) => ['id' => $st->StatusID, 'name' => $st->StatusName]),
         ]);
     }
 
     public function store(Request $request)
     {
+        // កែសម្រួល validation ឱ្យត្រូវជា profile_image (អក្សរតូច) សម្រាប់ទំព័រ Create ករណីបងប្រើអក្សរតូចនៅទីនោះ
         $request->validate([
             'OfficerName'    => 'required|string|max:255',
             'OfficerID_Code' => 'nullable|string|unique:officers,OfficerID_Code',
@@ -86,7 +79,6 @@ class StaffController extends Controller
 
         try {
             DB::transaction(function () use ($request) {
-
                 $officer = new Officer();
                 $officer->OfficerName    = $request->OfficerName;
                 $officer->Gender         = $request->Gender;
@@ -108,17 +100,11 @@ class StaffController extends Controller
                     $officer->StatusNote = null;
                 }
 
-                // កូដត្រូវកែសម្រួលនៅក្នុងអនុគមន៍ store()
+                // ឆែកមើល File រូបភាពសម្រាប់ទំព័រ Create
                 if ($request->hasFile('profile_image')) {
                     $file = $request->file('profile_image');
-
-                    // បង្កើតឈ្មោះថ្មីការពារការជាន់គ្នា
                     $filename = time() . '_' . uniqid() . '.' . $file->extension();
-
-                    // ប្រើ storeAs ដើម្បីបង្ខំឱ្យវាចូលទៅកាន់ Folder 'profiles' នៅក្នុងផ្លូវដែលមាន Volume ចងចាំ
                     $file->storeAs('profiles', $filename, 'public');
-
-                    // រក្សាទុកតែឈ្មោះ File ចូលក្នុង Database ដូចកូដចាស់បង
                     $officer->ProfileImage = $filename;
                 }
 
@@ -128,12 +114,9 @@ class StaffController extends Controller
                     foreach ($request->file('documents') as $file) {
                         $originalName = $file->getClientOriginalName();
                         $extension    = $file->extension();
-                        $filenameOnly = pathinfo($originalName, PATHINFO_FILENAME);
-
                         $safeName = 'doc_' . time() . '_' . uniqid() . '.' . $extension;
-
-                        // រក្សាទុកទៅក្នុង Folder documents តែមួយគត់
                         $path = $file->storeAs('documents', $safeName, 'public');
+
                         Document::create([
                             'OfficerID' => $officer->ID,
                             'FileName'  => $originalName,
@@ -148,6 +131,7 @@ class StaffController extends Controller
             return back()->withErrors(['error' => 'បរាជ័យក្នុងការរក្សាទុក៖ ' . $e->getMessage()]);
         }
     }
+
     public function index(Request $request)
     {
         $officers = Officer::with(['rank', 'role', 'unit', 'status', 'plan', 'office'])
@@ -207,24 +191,27 @@ class StaffController extends Controller
     }
 
     public function destroy(int $id)
+
     {
         $officer = Officer::with('documents')->findOrFail($id);
-
         foreach ($officer->documents as $doc) {
+
             // លុបឯកសារពិតប្រាកដចេញពី Storage
+
             if (Storage::disk('public')->exists($doc->FilePath)) {
+
                 Storage::disk('public')->delete($doc->FilePath);
             }
-
             Document::destroy($doc->DocumentID ?? $doc->id);
         }
+
         Officer::destroy($id);
+
         return redirect()->route('dashboard')->with('success', 'ទិន្នន័យមន្ត្រីត្រូវបានលុបដោយជោគជ័យ');
     }
 
     public function edit(Request $request, int $id)
     {
-        $officer = Officer::findOrFail($id);
         $officer = Officer::with('documents')->findOrFail($id);
         return Inertia::render('Staff/Edit', [
             'officer' => $officer,
@@ -263,7 +250,7 @@ class StaffController extends Controller
 
         $data = $request->validate([
             'OfficerName'    => 'required|string|max:255',
-            'OfficerID_Code' => 'required|unique:officers,OfficerID_Code,' . $id . ',ID',
+            'OfficerID_Code' => 'required|string|unique:officers,OfficerID_Code,' . $id . ',ID',
             'RankID'         => 'required|exists:ranks,RankID',
             'RoleID'         => 'required|exists:roles,RoleID',
             'Gender'         => 'required',
@@ -271,7 +258,7 @@ class StaffController extends Controller
             'StartDate'      => 'required|date',
             'StatusID'       => 'required',
             'StatusNote'     => 'required_if:StatusID,4,5,6,12|max:255',
-            'ProfileImage'   => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
+            'ProfileImage'   => 'nullable', // រក្សាទុកជាអក្សរធំ ដើម្បីកុំឱ្យទើសពេលបញ្ជូន String ឈ្មោះចាស់
             'UnitID'         => 'required|exists:units,UnitID',
             'PlanID'         => 'nullable|exists:plans,PlanID',
             'OfficeID'       => 'nullable|exists:offices,OfficeID',
@@ -286,21 +273,29 @@ class StaffController extends Controller
             $data['StatusNote'] = $request->StatusNote;
         }
 
+        // ត្រួតពិនិត្យការ Upload រូបភាព Profile ថ្មី (ឆែកមើលថាជា File ឬអត់)
         if ($request->hasFile('ProfileImage')) {
+            // លុបរូបភាពចាស់ចោលពី Storage ការពារការណែន Volume
             if (!empty($officer->ProfileImage)) {
                 $oldPath = 'profiles/' . $officer->ProfileImage;
                 if (Storage::disk('public')->exists($oldPath)) {
                     Storage::disk('public')->delete($oldPath);
                 }
             }
+
             $file = $request->file('ProfileImage');
-            $filename = time() . '_' . $file->getClientOriginalName();
+            // បង្កើតឈ្មោះថ្មីដែលមានលក្ខណៈ Unique ការពារការជាន់ឈ្មោះគ្នា
+            $filename = time() . '_' . uniqid() . '.' . $file->extension();
             $file->storeAs('profiles', $filename, 'public');
             $data['ProfileImage'] = $filename;
         } else {
+            // បើគ្មានការប្តូររូបភាពថ្មីទេ យកឈ្មោះរូបភាពចាស់ក្នុង Database ដដែល
             $data['ProfileImage'] = $officer->ProfileImage;
         }
+
         $officer->update($data);
+
+        // ត្រួតពិនិត្យការ Upload ឯកសារបន្ថែម
         if ($request->hasFile('documents')) {
             foreach ($request->file('documents') as $file) {
                 $originalName = $file->getClientOriginalName();
