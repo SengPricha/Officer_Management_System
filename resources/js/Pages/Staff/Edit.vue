@@ -24,7 +24,7 @@ const dobInput = ref(null);
 const joiningDateInput = ref(null);
 const imageUrl = ref(
     props.officer?.ProfileImage
-        ? `/storage/profiles/${props.officer.ProfileImage}`
+        ? `/profiles/${props.officer.ProfileImage}`
         : null
 );
 
@@ -199,7 +199,7 @@ watch(
             form.StatusID = newVal.StatusID || "";
             form.StatusNote = newVal.StatusNote || "";
             if (newVal.ProfileImage) {
-                imageUrl.value = `/storage/profiles/${newVal.ProfileImage}`;
+                imageUrl.value = `/profiles/${newVal.ProfileImage}`;
             }
         }
     },
@@ -920,7 +920,7 @@ const submit = () => {
                                             </svg>
                                             <a
                                                 :href="
-                                                    '/storage/' + doc.FilePath
+                                                    '/' + doc.FilePath
                                                 "
                                                 target="_blank"
                                                 class="text-sm font-medium text-gray-700 hover:text-blue-600 hover:underline truncate max-w-md transition-all"

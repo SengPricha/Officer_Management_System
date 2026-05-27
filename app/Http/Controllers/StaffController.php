@@ -14,7 +14,7 @@ use App\Models\Post;
 use App\Models\Status;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\File; // ថែមនេះដើម្បីលុប File ក្នុង public ផ្ទាល់
 use Inertia\Inertia;
 
 class StaffController extends Controller
@@ -52,7 +52,6 @@ class StaffController extends Controller
 
     public function store(Request $request)
     {
-        // កែសម្រួល validation ឱ្យត្រូវជា profile_image (អក្សរតូច) សម្រាប់ទំព័រ Create ករណីបងប្រើអក្សរតូចនៅទីនោះ
         $request->validate([
             'OfficerName'    => 'required|string|max:255',
             'OfficerID_Code' => 'nullable|string|unique:officers,OfficerID_Code',
@@ -100,27 +99,28 @@ class StaffController extends Controller
                     $officer->StatusNote = null;
                 }
 
-                // ឆែកមើល File រូបភាពសម្រាប់ទំព័រ Create
+                // 🎯 សម្រាប់ទំព័រ Create៖ ប្តូរមកប្រើ move() ចូល public/profiles ចំៗ
                 if ($request->hasFile('profile_image')) {
                     $file = $request->file('profile_image');
                     $filename = time() . '_' . uniqid() . '.' . $file->extension();
-                    $file->storeAs('profiles', $filename, 'public');
+                    $file->move(public_path('profiles'), $filename);
                     $officer->ProfileImage = $filename;
                 }
 
                 $officer->save();
 
+                // 🎯 សម្រាប់ទំព័រ Create (ឯកសារ)៖ ប្តូរមកប្រើ move() ចូល public/documents ចំៗ
                 if ($request->hasFile('documents')) {
                     foreach ($request->file('documents') as $file) {
                         $originalName = $file->getClientOriginalName();
                         $extension    = $file->extension();
                         $safeName = 'doc_' . time() . '_' . uniqid() . '.' . $extension;
-                        $path = $file->storeAs('documents', $safeName, 'public');
+                        $file->move(public_path('documents'), $safeName);
 
                         Document::create([
                             'OfficerID' => $officer->ID,
                             'FileName'  => $originalName,
-                            'FilePath'  => $path
+                            'FilePath'  => 'documents/' . $safeName // រក្សាទម្រង់រក្សាទុកក្នុង DB ដើម្បីកូដចាស់បងនៅដើរ
                         ]);
                     }
                 }
@@ -191,22 +191,26 @@ class StaffController extends Controller
     }
 
     public function destroy(int $id)
-
     {
         $officer = Officer::with('documents')->findOrFail($id);
         foreach ($officer->documents as $doc) {
-
-            // លុបឯកសារពិតប្រាកដចេញពី Storage
-
-            if (Storage::disk('public')->exists($doc->FilePath)) {
-
-                Storage::disk('public')->delete($doc->FilePath);
+            // 🎯 កែប្រែការលុបឯកសារពិតពី Folder public ផ្ទាល់
+            $publicDocPath = public_path($doc->FilePath);
+            if (File::exists($publicDocPath)) {
+                File::delete($publicDocPath);
             }
             Document::destroy($doc->DocumentID ?? $doc->id);
         }
 
-        Officer::destroy($id);
+        // 🎯 លុបរូបភាព Profile ចេញពី public ពេលលុបមន្ត្រី
+        if (!empty($officer->ProfileImage)) {
+            $publicProfilePath = public_path('profiles/' . $officer->ProfileImage);
+            if (File::exists($publicProfilePath)) {
+                File::delete($publicProfilePath);
+            }
+        }
 
+        Officer::destroy($id);
         return redirect()->route('dashboard')->with('success', 'ទិន្នន័យមន្ត្រីត្រូវបានលុបដោយជោគជ័យ');
     }
 
@@ -258,7 +262,7 @@ class StaffController extends Controller
             'StartDate'      => 'required|date',
             'StatusID'       => 'required',
             'StatusNote'     => 'required_if:StatusID,4,5,6,12|max:255',
-            'ProfileImage'   => 'nullable', // រក្សាទុកជាអក្សរធំ ដើម្បីកុំឱ្យទើសពេលបញ្ជូន String ឈ្មោះចាស់
+            'ProfileImage'   => 'nullable',
             'UnitID'         => 'required|exists:units,UnitID',
             'PlanID'         => 'nullable|exists:plans,PlanID',
             'OfficeID'       => 'nullable|exists:offices,OfficeID',
@@ -273,40 +277,38 @@ class StaffController extends Controller
             $data['StatusNote'] = $request->StatusNote;
         }
 
-        // ត្រួតពិនិត្យការ Upload រូបភាព Profile ថ្មី (ឆែកមើលថាជា File ឬអត់)
+        // 🎯 សម្រាប់អនុគមន៍ Update៖ ប្តូរមកប្រើ move() ចូល public/profiles ចំៗ
         if ($request->hasFile('ProfileImage')) {
-            // លុបរូបភាពចាស់ចោលពី Storage ការពារការណែន Volume
+            // លុបរូបភាពចាស់ចេញពី public/profiles ផ្ទាល់
             if (!empty($officer->ProfileImage)) {
-                $oldPath = 'profiles/' . $officer->ProfileImage;
-                if (Storage::disk('public')->exists($oldPath)) {
-                    Storage::disk('public')->delete($oldPath);
+                $oldPublicPath = public_path('profiles/' . $officer->ProfileImage);
+                if (File::exists($oldPublicPath)) {
+                    File::delete($oldPublicPath);
                 }
             }
 
             $file = $request->file('ProfileImage');
-            // បង្កើតឈ្មោះថ្មីដែលមានលក្ខណៈ Unique ការពារការជាន់ឈ្មោះគ្នា
             $filename = time() . '_' . uniqid() . '.' . $file->extension();
-            $file->storeAs('profiles', $filename, 'public');
+            $file->move(public_path('profiles'), $filename);
             $data['ProfileImage'] = $filename;
         } else {
-            // បើគ្មានការប្តូររូបភាពថ្មីទេ យកឈ្មោះរូបភាពចាស់ក្នុង Database ដដែល
             $data['ProfileImage'] = $officer->ProfileImage;
         }
 
         $officer->update($data);
 
-        // ត្រួតពិនិត្យការ Upload ឯកសារបន្ថែម
+        // 🎯 សម្រាប់អនុគមន៍ Update (ឯកសារបន្ថែម)៖ ប្តូរមកប្រើ move() ចូល public/documents ចំៗ
         if ($request->hasFile('documents')) {
             foreach ($request->file('documents') as $file) {
                 $originalName = $file->getClientOriginalName();
                 $extension    = $file->extension();
 
                 $safeName = 'doc_' . time() . '_' . uniqid() . '.' . $extension;
-                $path = $file->storeAs('documents', $safeName, 'public');
+                $file->move(public_path('documents'), $safeName);
 
                 $officer->documents()->create([
                     'FileName' => $originalName,
-                    'FilePath' => $path,
+                    'FilePath' => 'documents/' . $safeName,
                 ]);
             }
         }

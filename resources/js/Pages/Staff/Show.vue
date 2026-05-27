@@ -66,7 +66,7 @@ const isPDF = (fileName) => {
 const viewFile = (filePath) => {
     if (!filePath) return;
     // ប្រើ Path ផ្ទាល់ពី database (FilePath ជាទូទៅមានពាក្យ documents/ រួចជាស្រេច)
-    window.open(`/storage/${filePath}`, "_blank");
+    window.open(`/${filePath}`, "_blank");
 };
 
 // លុបឯកសារ
@@ -129,7 +129,7 @@ const deleteFile = (id) => {
                         <img
                             :src="
                                 officer.ProfileImage
-                                    ? `/storage/profiles/${officer.ProfileImage}`
+                                    ? `/profiles/${officer.ProfileImage}`
                                     : '/images/default-avatar.png'
                             "
                             class="md:w-48 md:h-56 w-28 h-36 object-cover rounded-md border border-gray-200 mb-4"
@@ -426,7 +426,7 @@ const deleteFile = (id) => {
                                     class="w-full h-full"
                                 >
                                     <img
-                                        :src="`/storage/${doc.FilePath}`"
+                                        :src="`/${doc.FilePath}`"
                                         class="w-full h-full object-cover"
                                     />
                                 </div>
@@ -490,7 +490,7 @@ const deleteFile = (id) => {
                                         មើល
                                     </button>
                                     <a
-                                        :href="`/storage/${doc.FilePath}`"
+                                        :href="`/${doc.FilePath}`"
                                         download
                                         class="w-full text-left px-4 py-2 text-[12px] hover:bg-gray-50 border-b block"
                                     >
