@@ -108,10 +108,18 @@ class StaffController extends Controller
                     $officer->StatusNote = null;
                 }
 
+                // កូដត្រូវកែសម្រួលនៅក្នុងអនុគមន៍ store()
                 if ($request->hasFile('profile_image')) {
                     $file = $request->file('profile_image');
-                    $path = $file->store('profiles', 'public');
-                    $officer->ProfileImage = basename($path);
+
+                    // បង្កើតឈ្មោះថ្មីការពារការជាន់គ្នា
+                    $filename = time() . '_' . uniqid() . '.' . $file->extension();
+
+                    // ប្រើ storeAs ដើម្បីបង្ខំឱ្យវាចូលទៅកាន់ Folder 'profiles' នៅក្នុងផ្លូវដែលមាន Volume ចងចាំ
+                    $file->storeAs('profiles', $filename, 'public');
+
+                    // រក្សាទុកតែឈ្មោះ File ចូលក្នុង Database ដូចកូដចាស់បង
+                    $officer->ProfileImage = $filename;
                 }
 
                 $officer->save();
