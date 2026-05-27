@@ -34,12 +34,20 @@ defineProps({
     links: Array,
 });
 const cleanLabel = (label) => {
-    let newLabel = label
-        .replace("&laquo; Previous", "ថយក្រោយ")
-        .replace("Next &raquo;", "បន្ទាប់");
+    if (!label) return "";
+
+    let newLabel = label;
+
+    if (newLabel.includes("Previous") || newLabel.includes("laquo")) {
+        return "ថយក្រោយ";
+    }
+    if (newLabel.includes("Next") || newLabel.includes("raquo")) {
+        return "បន្ទាប់";
+    }
     if (!isNaN(newLabel)) {
         return toKhmerNumber(newLabel);
     }
+
     return newLabel;
 };
 const toKhmerNumber = (num) => {
