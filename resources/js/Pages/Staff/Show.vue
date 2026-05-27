@@ -63,10 +63,27 @@ const isPDF = (fileName) => {
 };
 
 // មើល File (បើក Tab ថ្មី)
-const viewFile = (filePath) => {
+const viewFile = async (filePath) => {
     if (!filePath) return;
-    // ប្រើ Path ផ្ទាល់ពី database (FilePath ជាទូទៅមានពាក្យ documents/ រួចជាស្រេច)
-    window.open(`/${filePath}`, "_blank");
+
+    const primaryUrl = `/${filePath}`; // ផ្លូវថ្មី (រត់ចូល public/documents/... ផ្ទាល់)
+    const fallbackUrl = `/storage/${filePath}`; // ផ្លូវចាស់ (រត់ចូល storage/app/public/documents/...)
+
+    try {
+        // លួចឆែកមើលមួយភ្លែតសិនថា តើផ្លូវថ្មីមានសាច់ឯកសារពិតមែនអត់
+        const response = await fetch(primaryUrl, { method: "HEAD" });
+
+        if (response.ok) {
+            // បើមានឯកសារនៅក្នុង public ថ្មីមែន គឺបើកផ្លូវថ្មីហ្នឹងតែម្តង
+            window.open(primaryUrl, "_blank");
+        } else {
+            // បើផ្លូវថ្មីលោត 404 (រកមិនឃើញ) មានន័យថាជាឯកសារចាស់ ឱ្យស្ទុះទៅបើកផ្លូវចាស់ភ្លាម
+            window.open(fallbackUrl, "_blank");
+        }
+    } catch (error) {
+        // ករណីមានបញ្ហា Network ឬជាប់ Error អ្វីផ្សេង គឺឱ្យធ្លាក់ទៅបើកផ្លូវចាស់ជា Fallback ការពារ
+        window.open(fallbackUrl, "_blank");
+    }
 };
 
 // លុបឯកសារ
@@ -132,7 +149,18 @@ const deleteFile = (id) => {
                                     ? `/profiles/${officer.ProfileImage}`
                                     : '/images/default-avatar.png'
                             "
+                            @error="
+                                (e) => {
+                                    if (
+                                        officer.ProfileImage &&
+                                        !e.target.src.includes('/storage/')
+                                    ) {
+                                        e.target.src = `/storage/profiles/${officer.ProfileImage}`;
+                                    }
+                                }
+                            "
                             class="md:w-48 md:h-56 w-28 h-36 object-cover rounded-md border border-gray-200 mb-4"
+                            alt="Profile"
                         />
                         <div class="text-center">
                             <div class="flex justify-center gap-2 items-center">
@@ -354,7 +382,9 @@ const deleteFile = (id) => {
                                         </div>
                                     </td>
                                     <td class="px-4 py-4 text-center">
-                                        <div class="md:text-sm text-xs text-gray-700">
+                                        <div
+                                            class="md:text-sm text-xs text-gray-700"
+                                        >
                                             {{ bio.role?.RoleName }}
                                         </div>
                                     </td>
@@ -426,7 +456,15 @@ const deleteFile = (id) => {
                                     class="w-full h-full"
                                 >
                                     <img
-                                        :src="`/${doc.FilePath}`"
+                                        :href="
+                                            doc.FilePath.startsWith('http')
+                                                ? doc.FilePath
+                                                : doc.FilePath.includes(
+                                                      'storage'
+                                                  )
+                                                ? `/${doc.FilePath}`
+                                                : `/storage/${doc.FilePath}`
+                                        "
                                         class="w-full h-full object-cover"
                                     />
                                 </div>
@@ -490,7 +528,15 @@ const deleteFile = (id) => {
                                         មើល
                                     </button>
                                     <a
-                                        :href="`/${doc.FilePath}`"
+                                        :href="
+                                            doc.FilePath.startsWith('http')
+                                                ? doc.FilePath
+                                                : doc.FilePath.includes(
+                                                      'storage'
+                                                  )
+                                                ? `/${doc.FilePath}`
+                                                : `/storage/${doc.FilePath}`
+                                        "
                                         download
                                         class="w-full text-left px-4 py-2 text-[12px] hover:bg-gray-50 border-b block"
                                     >

@@ -53,13 +53,29 @@ const handleFileChange = (event) => {
     form.documents.push(...selectedFiles);
 };
 
-const viewFile = (file) => {
-    if (file) {
-        return URL.createObjectURL(file);
-    }
-    return "#";
-};
+// អនុគមន៍ដោះស្រាយលីងឯកសារចាស់ និងថ្មីលើប៊ូតុងចុច
+const viewDocument = async (filePath) => {
+    if (!filePath) return;
 
+    const primaryUrl = `/${filePath}`; // ផ្លូវថ្មី (public/documents/...)
+    const fallbackUrl = `/storage/${filePath}`; // ផ្លូវចាស់ (storage/app/public/documents/...)
+
+    try {
+        // តេស្តហៅទៅផ្លូវថ្មីសិន
+        const response = await fetch(primaryUrl, { method: "HEAD" });
+
+        if (response.ok) {
+            // បើផ្លូវថ្មីមានឯកសារពិត គឺបើកផ្លូវថ្មី
+            window.open(primaryUrl, "_blank");
+        } else {
+            // បើផ្លូវថ្មីលោត 404 គឺវាស្ទុះទៅបើកផ្លូវចាស់ភ្លាម
+            window.open(fallbackUrl, "_blank");
+        }
+    } catch (error) {
+        // ករណីមានបញ្ហាអ្វីផ្សេង គឺឱ្យធ្លាក់ទៅបើកផ្លូវចាស់ជា Fallback
+        window.open(fallbackUrl, "_blank");
+    }
+};
 const removeFile = (index) => {
     form.documents.splice(index, 1);
 };
@@ -199,7 +215,24 @@ watch(
             form.StatusID = newVal.StatusID || "";
             form.StatusNote = newVal.StatusNote || "";
             if (newVal.ProfileImage) {
-                imageUrl.value = `/profiles/${newVal.ProfileImage}`;
+                const primaryUrl = `/profiles/${newVal.ProfileImage}`;
+                const fallbackUrl = `/storage/profiles/${newVal.ProfileImage}`;
+
+                // បង្កើតតេស្តរូបភាពក្នុង JavaScript ដើម្បីឆែកមើលថាផ្លូវណាមានសាច់រូបភាពពិត
+                const img = new Image();
+                img.src = primaryUrl;
+
+                img.onload = () => {
+                    // បើមានរូបភាពនៅក្នុងផ្លូវថ្មី (/profiles/) ឱ្យយកផ្លូវថ្មី
+                    imageUrl.value = primaryUrl;
+                };
+
+                img.onerror = () => {
+                    // បើរកក្នុងផ្លូវថ្មីមិនឃើញ (Error 404) ឱ្យប្តូរទៅយកផ្លូវចាស់ (/storage/profiles/) វិញភ្លាម
+                    imageUrl.value = fallbackUrl;
+                };
+            } else {
+                imageUrl.value = "/images/default-avatar.png";
             }
         }
     },
@@ -852,7 +885,7 @@ const submit = () => {
                                 </div>
                             </div>
                         </div>
-                            <div class="flex flex-col md:flex-row md:items-center">
+                        <div class="flex flex-col md:flex-row md:items-center">
                             <label
                                 class="block text-md font-medium text-gray-700 w-64 font-siemreap"
                             >
@@ -920,10 +953,19 @@ const submit = () => {
                                             </svg>
                                             <a
                                                 :href="
-                                                    '/' + doc.FilePath
+                                                    doc.FilePath
+                                                        ? doc.FilePath.startsWith(
+                                                              'storage/'
+                                                          )
+                                                            ? `/${doc.FilePath}`
+                                                            : `/${doc.FilePath}`
+                                                        : '#'
+                                                "
+                                                @click.prevent="
+                                                    viewDocument(doc.FilePath)
                                                 "
                                                 target="_blank"
-                                                class="text-sm font-medium text-gray-700 hover:text-blue-600 hover:underline truncate max-w-md transition-all"
+                                                class="text-sm font-medium text-gray-700 hover:text-blue-600 hover:underline truncate max-w-md transition-all cursor-pointer"
                                             >
                                                 {{ doc.FileName }}
                                             </a>
