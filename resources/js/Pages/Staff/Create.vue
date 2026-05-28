@@ -39,7 +39,7 @@ const form = useForm({
     StartDate: "",
     StatusID: "",
     StatusNote: "",
-    profile_image: null,
+    ProfileImage: null,
     documents: [],
 });
 
@@ -48,6 +48,15 @@ const toLatinNumber = (str) => {
     const khmerNumbers = ["០", "១", "២", "៣", "៤", "៥", "៦", "៧", "៨", "៩"];
     return str.toString().replace(/[០-៩]/g, (s) => khmerNumbers.indexOf(s));
 };
+
+watch(
+    () => form.RankID,
+    (newValue) => {
+        if (newValue) {
+            form.errors.RankID = null;
+        }
+    }
+);
 
 watch(
     () => form.OfficerID_Code,
@@ -78,7 +87,7 @@ onMounted(() => {
 const showPreview = (event) => {
     const file = event.target.files[0];
     if (file) {
-        form.profile_image = file;
+        form.ProfileImage = file;
         imageUrl.value = URL.createObjectURL(file);
     }
 };
@@ -116,6 +125,9 @@ const submit = () => {
                 timer: 3000,
                 timerProgressBar: true,
             });
+        },
+        onError: (errors) => {
+            console.log("កំហុសពី Backend:", errors);
         },
     });
 };
@@ -353,8 +365,10 @@ watch(
                                 <select
                                     v-model="form.RankID"
                                     :class="[
-                                        'mt-1 block w-full leading-7 border border-gray-300 outline-none transition-all focus:border-blue-500 focus:ring-2 focus:ring-blue-200 rounded-md px-2 py-2 text-sm cursor-pointer',
-
+                                        'mt-1 block w-full leading-7 outline-none transition-all rounded-md px-2 py-2 text-sm cursor-pointer',
+                                        form.errors.RankID
+                                            ? 'border-red-500 focus:border-red-500 focus:ring-red-200'
+                                            : 'border-gray-300 focus:border-blue-500 focus:ring-blue-200 border',
                                         form.RankID === ''
                                             ? 'text-gray-500'
                                             : 'text-gray-900',
@@ -741,7 +755,7 @@ watch(
                         </div>
                         <div class="flex flex-col md:flex-row md:items-center">
                             <label
-                                class="block text-md font-medium text-gray-700 w-44 mt-2 font-siemreap"
+                                class="block text-md font-medium text-gray-700 w-48 mt-2 font-siemreap"
                             >
                                 សំណុំឯកសារ* :
                             </label>
@@ -794,7 +808,7 @@ watch(
                                     <div
                                         v-for="(file, index) in form.documents"
                                         :key="index"
-                                        class="flex items-center justify-between p-4 bg-white border border-gray-200 rounded-xl shadow-sm"
+                                        class="flex items-center justify-between p-2 bg-white border border-gray-200 rounded-xl shadow-sm"
                                     >
                                         <div class="flex items-center gap-3">
                                             <svg

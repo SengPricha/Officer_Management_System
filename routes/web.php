@@ -63,7 +63,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/staff/{id}/edit', [StaffController::class, 'edit'])->name('staff.edit');
     Route::put('/staff/{id}', [StaffController::class, 'update'])->name('staff.update');
     Route::delete('/staff/{id}', [StaffController::class, 'destroy'])->name('staff.destroy');
-    Route::delete('/documents/{id}', [StaffController::class, 'destroyDocument']);
+    Route::delete('/documents/{id}', [StaffController::class, 'destroyDocument'])->where('id', '[0-9]+');
 
     Route::get('/biography/{id}', [OfficerBiographyController::class, 'index'])->name('biography.index');
     Route::post('/biography/{id}/update', [OfficerBiographyController::class, 'update'])->name('biography.update');

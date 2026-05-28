@@ -50,9 +50,6 @@ class StaffController extends Controller
         ]);
     }
 
-    /**
-     * 🎯 អនុគមន៍រក្សាឈ្មោះដើម និងថែម (1), (2) ករណីជាន់ឈ្មោះគ្នា
-     */
     private function generateUniqueFileName($file, $destinationFolder)
     {
         $originalName = $file->getClientOriginalName();
@@ -62,7 +59,6 @@ class StaffController extends Controller
         $finalName = $originalName;
         $counter = 1;
 
-        // បើមាន File ឈ្មោះហ្នឹងរួចហើយ វានឹងរត់ Loop ថែមលេខ (1), (2)...
         while (File::exists(public_path($destinationFolder . '/' . $finalName))) {
             $finalName = $filename . '(' . $counter . ').' . $extension;
             $counter++;
@@ -80,7 +76,7 @@ class StaffController extends Controller
             'RankID'         => 'required|exists:ranks,RankID',
             'UnitID'         => 'required|integer',
             'StatusID'       => 'required|integer',
-            'StatusNote'     => 'required_if:StatusID,4,5,6,12|max:255',
+            'StatusNote'     => 'required_if:StatusID,4,5,6,12|nullable|string|max:255',
             'RoleID'         => 'required|exists:roles,RoleID',
             'DOB'            => 'required|date',
             'StartDate'      => 'required|date',
@@ -114,35 +110,35 @@ class StaffController extends Controller
                 $officer->PostID         = $request->PostID;
                 $officer->StatusID       = $request->StatusID;
 
-
                 if (in_array($request->StatusID, [4, 5, 6, 12])) {
                     $officer->StatusNote = $request->StatusNote;
                 } else {
                     $officer->StatusNote = null;
                 }
 
+                // [កែសម្រួលទី១]៖ ត្រូវហៅទាញរូបភាព Profile មកដាក់ក្នុង Object មុននឹង Save មន្ត្រីចូល DB
                 if ($request->hasFile('ProfileImage')) {
                     $file = $request->file('ProfileImage');
                     $fileName = $this->generateUniqueFileName($file, 'profiles');
                     $file->move(public_path('profiles'), $fileName);
                     $officer->ProfileImage = $fileName;
                 }
+
                 $officer->save();
 
                 if ($request->hasFile('documents')) {
                     foreach ($request->file('documents') as $file) {
                         $fileName = $this->generateUniqueFileName($file, 'documents');
                         $file->move(public_path('documents'), $fileName);
+
                         Document::create([
-                            'OfficerID'  => $officer->id, // ឬ $officer->ID ទៅតាម Primary Key ក្នុង DB របស់បង
+                            'OfficerID'  => $officer->ID,
                             'FileName'   => $file->getClientOriginalName(),
                             'FilePath'   => 'documents/' . $fileName,
                         ]);
                     }
                 }
             });
-
-
 
             return redirect()->route('dashboard')->with('success', 'ទិន្នន័យមន្ត្រីត្រូវបានរក្សាទុកដោយជោគជ័យ!');
         } catch (\Exception $e) {
@@ -248,7 +244,7 @@ class StaffController extends Controller
 
         $validatedData = $request->validate([
             'OfficerName'    => 'required|string|max:255',
-            'OfficerID_Code' => 'required|string|unique:officers,OfficerID_Code,' . $id . ',ID', // ត្រូវប្រាកដថា ID ជា Primary Key របស់មន្ត្រី
+            'OfficerID_Code' => 'required|string|unique:officers,OfficerID_Code,' . $id . ',ID',
             'RankID'         => 'required|exists:ranks,RankID',
             'RoleID'         => 'required|exists:roles,RoleID',
             'Gender'         => 'required',
@@ -264,45 +260,43 @@ class StaffController extends Controller
             'documents.*'    => 'nullable|file|mimes:pdf,doc,docx,jpg,png|max:5120',
         ]);
 
-        // គ្រប់គ្រងស្ថានភាព StatusNote
         if (!in_array($request->StatusID, [4, 5, 6, 12])) {
             $validatedData['StatusNote'] = null;
         } else {
             $validatedData['StatusNote'] = $request->StatusNote;
         }
 
-        // 🎯 គ្រប់គ្រងការ Upload រូបភាព Profile ថ្មី និងលុបរូបចាស់
         if ($request->hasFile('ProfileImage')) {
             $file = $request->file('ProfileImage');
             $fileName = $this->generateUniqueFileName($file, 'profiles');
 
-            // លុបរូបភាពចាស់ចេញពី public/profiles (បើមាន)
             if ($officer->ProfileImage && File::exists(public_path('profiles/' . $officer->ProfileImage))) {
                 File::delete(public_path('profiles/' . $officer->ProfileImage));
             }
 
             $file->move(public_path('profiles'), $fileName);
-
-            // បញ្ចូលឈ្មោះរូបភាពថ្មីទៅក្នុង Model ផ្ទាល់ (ដោះស្រាយបញ្ហាជាប់ .tmp ក្នុង DB)
             $officer->ProfileImage = $fileName;
         }
-
-        // ដក ProfileImage ចេញពី Array មុនពេល update ដើម្បីកុំឱ្យជាន់គ្នាជាមួយ Logic ខាងលើ
         unset($validatedData['ProfileImage']);
-
-        // Update ទិន្នន័យអត្ថបទទាំងអស់ចូលទៅក្នុង Database
         $officer->update($validatedData);
-
-        // 🎯 គ្រប់គ្រងការ Upload ឯកសារបន្ថែមថ្មីៗ
         if ($request->hasFile('documents')) {
-            foreach ($request->file('documents') as $file) {
-                $fileName = $this->generateUniqueFileName($file, 'documents');
-                $file->move(public_path('documents'), $fileName);
-                Document::create([
-                    'OfficerID'  => $officer->id, // ឬ $officer->ID ទៅតាម Primary Key
-                    'FileName'   => $file->getClientOriginalName(),
-                    'FilePath'   => 'documents/' . $fileName,
-                ]);
+            $currentOfficerId = isset($id) ? $id : (isset($staff) ? $staff->id : null);
+            if (!$currentOfficerId && isset($officer)) {
+                $currentOfficerId = $officer->id;
+            }
+
+            if ($currentOfficerId) {
+                foreach ($request->file('documents') as $file) {
+                    $fileName = $this->generateUniqueFileName($file, 'documents');
+                    $file->move(public_path('documents'), $fileName);
+                    Document::create([
+                        'OfficerID'  => $currentOfficerId,
+                        'FileName'   => $file->getClientOriginalName(),
+                        'FilePath'   => 'documents/' . $fileName,
+                    ]);
+                }
+            } else {
+                return back()->withErrors(['error' => 'មិនអាចរក្សាទុកឯកសារបានទេ ព្រោះរកមិនឃើញ ID របស់បុគ្គលិកឡើយ!']);
             }
         }
 
@@ -343,7 +337,7 @@ class StaffController extends Controller
     }
 
     /**
-     * 🎯 អនុគមន៍សម្រាប់លុបឯកសារមួយៗចោល (ហៅមកពីផ្ទាំង Review ឬប៊ូតុងលុបក្នុងទំព័រ Edit)
+     * 🎯 មុខងារលុបឯកសារម្តងមួយៗ (កែឈ្មោះ Method និងលុបឱ្យត្រូវតាមការហៅពី Front-end)
      */
     public function destroyDocument($id)
     {
@@ -353,7 +347,6 @@ class StaffController extends Controller
         $publicPath = public_path($filePath);
         $storagePath = storage_path('app/public/' . $filePath);
 
-        // លុបឯកសារចេញពីថតផ្ទុកពិតប្រាកដ
         if (File::exists($publicPath)) {
             File::delete($publicPath);
         }

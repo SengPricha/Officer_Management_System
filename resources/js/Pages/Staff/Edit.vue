@@ -281,20 +281,18 @@ watch(
             form.StatusID = newVal.StatusID || "";
             form.StatusNote = newVal.StatusNote || "";
             if (newVal.ProfileImage) {
-                const primaryUrl = `/profiles/${newVal.ProfileImage}`;
-                const fallbackUrl = `/storage/profiles/${newVal.ProfileImage}`;
-
-                // បង្កើតតេស្តរូបភាពក្នុង JavaScript ដើម្បីឆែកមើលថាផ្លូវណាមានសាច់រូបភាពពិត
+                let rawFileName = newVal.ProfileImage;
+                if (rawFileName.startsWith("profiles/")) {
+                    rawFileName = rawFileName.replace("profiles/", "");
+                }
+                const primaryUrl = `/profiles/${rawFileName}`;
+                const fallbackUrl = `/storage/profiles/${rawFileName}`;
                 const img = new Image();
                 img.src = primaryUrl;
-
                 img.onload = () => {
-                    // បើមានរូបភាពនៅក្នុងផ្លូវថ្មី (/profiles/) ឱ្យយកផ្លូវថ្មី
                     imageUrl.value = primaryUrl;
                 };
-
                 img.onerror = () => {
-                    // បើរកក្នុងផ្លូវថ្មីមិនឃើញ (Error 404) ឱ្យប្តូរទៅយកផ្លូវចាស់ (/storage/profiles/) វិញភ្លាម
                     imageUrl.value = fallbackUrl;
                 };
             } else {
@@ -1074,7 +1072,6 @@ const submit = () => {
                                             newSelectedFiles.length > 0
                                         "
                                     >
-
                                         <div
                                             v-for="(
                                                 file, index

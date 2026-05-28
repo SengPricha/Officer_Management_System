@@ -4,12 +4,12 @@ import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.vue";
 import { Head, router } from "@inertiajs/vue3";
 
 const props = defineProps({
-    documents: Array, // ឯកសារទាំងអស់បោះមកពី Controller
+    documents: Array,
 });
 
 const searchQuery = ref("");
 
-// ១. បង្កើត Logic ដើម្បី Group ឯកសារតាមមន្ត្រី (បង្កើតជា Folder)
+// ១. ចែក Folder តាមឈ្មោះមន្ត្រី
 const officerFolders = computed(() => {
     const groups = {};
 
@@ -35,32 +35,41 @@ const officerFolders = computed(() => {
     );
 });
 
-// ២. គ្រប់គ្រងការបើក Folder
+// ២. គ្រប់គ្រងការបើក និងបិទ Folder
 const selectedFolder = ref(null);
 
 const closeFolder = () => {
     selectedFolder.value = null;
 };
 
-// ៣. Logic សម្រាប់ File Types & Icons
-const isImage = (path) => /\.(jpg|jpeg|png|gif|webp)$/i.test(path);
-const isPdf = (path) => /\.pdf$/i.test(path);
-const isDoc = (path) => /\.(doc|docx)$/i.test(path);
+// ៣. ពិនិត្យប្រភេទឯកសារ (រូបភាព, PDF, Word)
+const isImage = (filePath) => {
+    if (!filePath) return false;
+    return /\.(jpg|jpeg|png|gif|webp)$/i.test(filePath);
+};
 
-// ៤. មុខងារលុបឯកសារ
-const deleteFile = (id) => {
-    if (confirm("តើអ្នកពិតជាចង់លុបឯកសារនេះមែនទេ?")) {
-        router.delete(route("documents.destroy", id), {
-            onSuccess: () => {
-                if (selectedFolder.value) {
-                    selectedFolder.value.files =
-                        selectedFolder.value.files.filter(
-                            (f) => f.DocID !== id
-                        );
-                }
-            },
-        });
+const isPdf = (filePath) => {
+    if (!filePath) return false;
+    return /\.pdf$/i.test(filePath);
+};
+
+const isDoc = (filePath) => {
+    if (!filePath) return false;
+    return /\.(doc|docx)$/i.test(filePath);
+};
+
+const getFileStorageUrl = (filePath) => {
+    if (!filePath) return "";
+    if (filePath.startsWith("documents/")) {
+        return `/${filePath}`;
     }
+    return `/documents/${filePath}`;
+};
+
+const viewFile = (filePath) => {
+    if (!filePath) return;
+    const url = getFileStorageUrl(filePath);
+    window.open(url, "_blank");
 };
 </script>
 
@@ -104,8 +113,8 @@ const deleteFile = (id) => {
                         <p class="text-xs text-gray-500 mt-1">
                             {{
                                 selectedFolder
-                                    ? selectedFolder.files.length + " File"
-                                    : officerFolders.length + " Folder"
+                                    ? selectedFolder.files.length + " ឯកសារ"
+                                    : officerFolders.length + " ថតឯកសារ"
                             }}
                         </p>
                     </div>
@@ -169,7 +178,7 @@ const deleteFile = (id) => {
                     v-for="folder in officerFolders"
                     :key="folder.id"
                     @click="selectedFolder = folder"
-                    class="flex items-center p-4 bg-white border border-gray-100 rounded-2xl cursor-pointer hover:shadow-md transition-all group"
+                    class="flex items-center p-4 bg-white border border-gray-100 rounded-2xl cursor-pointer hover:shadow-md transition-all group animate-fade-in"
                 >
                     <div
                         class="p-3 bg-gray-50 rounded-xl group-hover:bg-blue-50 mr-4 transition-colors"
@@ -215,14 +224,14 @@ const deleteFile = (id) => {
                 <div
                     v-for="file in selectedFolder.files"
                     :key="file.DocID"
-                    class="bg-white border border-gray-200 rounded-2xl overflow-hidden hover:shadow-lg transition-all group flex flex-col"
+                    class="bg-white border border-gray-200 rounded-2xl overflow-hidden hover:shadow-lg transition-all group flex flex-col animate-fade-in"
                 >
                     <div
                         class="bg-blue-50/50 px-4 py-3 flex items-center justify-between border-b border-gray-100"
                     >
                         <div class="flex items-center gap-2 min-w-0">
                             <svg
-                                v-if="isPdf(file.FilePath)"
+                                v-if="isPdf(file.FilePath || file.filepath)"
                                 class="h-5 w-5 text-red-500 flex-shrink-0"
                                 fill="none"
                                 viewBox="0 0 24 24"
@@ -236,7 +245,9 @@ const deleteFile = (id) => {
                                 />
                             </svg>
                             <svg
-                                v-else-if="isDoc(file.FilePath)"
+                                v-else-if="
+                                    isDoc(file.FilePath || file.filepath)
+                                "
                                 class="h-5 w-5 text-blue-500 flex-shrink-0"
                                 fill="none"
                                 viewBox="0 0 24 24"
@@ -251,7 +262,7 @@ const deleteFile = (id) => {
                             </svg>
                             <svg
                                 v-else
-                                class="h-5 w-5 text-gray-400 flex-shrink-0"
+                                class="h-5 w-5 text-emerald-500 flex-shrink-0"
                                 fill="none"
                                 viewBox="0 0 24 24"
                                 stroke="currentColor"
@@ -293,7 +304,9 @@ const deleteFile = (id) => {
                             >
                                 <a
                                     :href="
-                                        '/storage/' + encodeURI(file.FilePath)
+                                        getFileStorageUrl(
+                                            file.FilePath || file.filepath
+                                        )
                                     "
                                     target="_blank"
                                     class="flex items-center px-4 py-2 text-xs text-gray-600 hover:bg-blue-50"
@@ -302,38 +315,41 @@ const deleteFile = (id) => {
                                 </a>
                                 <a
                                     :href="
-                                        '/storage/' + encodeURI(file.FilePath)
+                                        getFileStorageUrl(
+                                            file.FilePath || file.filepath
+                                        )
                                     "
                                     download
                                     class="flex items-center px-4 py-2 text-xs text-gray-600 hover:bg-blue-50"
                                 >
                                     ទាញយក
                                 </a>
-                                <hr class="my-1 border-gray-50" />
-                                <button
-                                    @click="deleteFile(file.DocID)"
-                                    class="flex items-center w-full px-4 py-2 text-xs text-red-500 hover:bg-red-50"
-                                >
-                                    លុបឯកសារ
-                                </button>
                             </div>
                         </div>
                     </div>
 
                     <div
-                        class="p-2 flex items-center justify-center bg-white h-32 overflow-hidden"
+                        class="p-2 flex items-center justify-center bg-gray-50 h-32 overflow-hidden border-t border-gray-100 rounded-b-2xl"
                     >
                         <img
-                            v-if="isImage(file.FilePath)"
-                            :src="'/storage/' + encodeURI(file.FilePath)"
-                            class="w-full h-full object-cover rounded-lg group-hover:scale-105 transition-transform"
+                            v-if="isImage(file.FilePath || file.filepath)"
+                            @click="viewFile(file.FilePath || file.filepath)"
+                            :src="
+                                getFileStorageUrl(
+                                    file.FilePath || file.filepath
+                                )
+                            "
+                            class="w-full h-full object-cover rounded-xl group-hover:scale-105 transition-transform duration-300 cursor-pointer"
+                            alt="File Preview"
                         />
+
                         <div
-                            v-else
-                            class="flex flex-col items-center opacity-20 group-hover:opacity-30 transition-opacity"
+                            v-else-if="isPdf(file.FilePath || file.filepath)"
+                            @click="viewFile(file.FilePath || file.filepath)"
+                            class="flex flex-col items-center justify-center gap-1 text-red-500 opacity-60 group-hover:opacity-100 transition-opacity cursor-pointer"
                         >
                             <svg
-                                class="h-12 w-12 text-gray-400"
+                                class="h-10 w-10"
                                 fill="none"
                                 viewBox="0 0 24 24"
                                 stroke="currentColor"
@@ -341,7 +357,53 @@ const deleteFile = (id) => {
                                 <path
                                     stroke-linecap="round"
                                     stroke-linejoin="round"
-                                    stroke-width="1"
+                                    stroke-width="1.5"
+                                    d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"
+                                />
+                            </svg>
+                            <span
+                                class="text-[10px] bg-red-100 text-red-600 px-2 py-0.5 rounded-md font-bold uppercase"
+                                >PDF</span
+                            >
+                        </div>
+
+                        <div
+                            v-else-if="isDoc(file.FilePath || file.filepath)"
+                            class="flex flex-col items-center justify-center gap-1 text-blue-500 opacity-60 group-hover:opacity-100 transition-opacity"
+                        >
+                            <svg
+                                class="h-10 w-10"
+                                fill="none"
+                                viewBox="0 0 24 24"
+                                stroke="currentColor"
+                            >
+                                <path
+                                    stroke-linecap="round"
+                                    stroke-linejoin="round"
+                                    stroke-width="1.5"
+                                    d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+                                />
+                            </svg>
+                            <span
+                                class="text-[10px] bg-blue-100 text-blue-600 px-2 py-0.5 rounded-md font-bold uppercase"
+                                >WORD</span
+                            >
+                        </div>
+
+                        <div
+                            v-else
+                            class="flex flex-col items-center opacity-30 group-hover:opacity-40 transition-opacity text-gray-400"
+                        >
+                            <svg
+                                class="h-10 w-10"
+                                fill="none"
+                                viewBox="0 0 24 24"
+                                stroke="currentColor"
+                            >
+                                <path
+                                    stroke-linecap="round"
+                                    stroke-linejoin="round"
+                                    stroke-width="1.5"
                                     d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
                                 />
                             </svg>
@@ -361,7 +423,7 @@ const deleteFile = (id) => {
                 >
                     <path
                         d="M2 6a2 2 0 012-2h5l2 2h5a2 2 0 012 2v6a2 2 0 01-2 2H4a2 2 0 01-2-2V6z"
-                    ></path>
+                    />
                 </svg>
                 <p class="text-lg">មិនមានឯកសារនៅក្នុងប្រព័ន្ធឡើយ</p>
             </div>
