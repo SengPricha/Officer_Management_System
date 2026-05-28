@@ -1,7 +1,6 @@
 <script setup>
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.vue";
-import { useForm, Head } from "@inertiajs/vue3";
-import { Link } from "@inertiajs/vue3";
+import { useForm, Head, Link, router } from "@inertiajs/vue3";
 import { ref, watch, onMounted, computed } from "vue";
 import flatpickr from "flatpickr";
 import "flatpickr/dist/flatpickr.css";
@@ -48,44 +47,114 @@ const form = useForm({
     documents: [],
 });
 
+// 🎯 រក្សាទុក Object របស់ File ថ្មីសម្រាប់បង្ហាញនៅលើ UI (Review)
+const newSelectedFiles = ref([]);
+
+// ១. អនុគមន៍ជ្រើសរើសឯកសារថ្មី
 const handleFileChange = (event) => {
     const selectedFiles = Array.from(event.target.files);
-    form.documents.push(...selectedFiles);
+
+    // បន្ថែមឯកសារថ្មីចូលទៅក្នុង Array ចាស់
+    newSelectedFiles.value = [...newSelectedFiles.value, ...selectedFiles];
+
+    // ធ្វើបច្ចុប្បន្នភាពចូលក្នុង form ឱ្យដើរស្របគ្នា
+    form.documents = [...newSelectedFiles.value];
 };
 
-// អនុគមន៍ដោះស្រាយលីងឯកសារចាស់ និងថ្មីលើប៊ូតុងចុច
+// ២. អនុគមន៍មើលឯកសារចាស់
 const viewDocument = async (filePath) => {
     if (!filePath) return;
 
-    const primaryUrl = `/${filePath}`; // ផ្លូវថ្មី (public/documents/...)
-    const fallbackUrl = `/storage/${filePath}`; // ផ្លូវចាស់ (storage/app/public/documents/...)
+    const primaryUrl = `/${filePath}`;
+    const fallbackUrl = `/storage/${filePath}`;
 
     try {
-        // តេស្តហៅទៅផ្លូវថ្មីសិន
         const response = await fetch(primaryUrl, { method: "HEAD" });
-
         if (response.ok) {
-            // បើផ្លូវថ្មីមានឯកសារពិត គឺបើកផ្លូវថ្មី
             window.open(primaryUrl, "_blank");
         } else {
-            // បើផ្លូវថ្មីលោត 404 គឺវាស្ទុះទៅបើកផ្លូវចាស់ភ្លាម
             window.open(fallbackUrl, "_blank");
         }
     } catch (error) {
-        // ករណីមានបញ្ហាអ្វីផ្សេង គឺឱ្យធ្លាក់ទៅបើកផ្លូវចាស់ជា Fallback
         window.open(fallbackUrl, "_blank");
     }
 };
-const removeFile = (index) => {
-    form.documents.splice(index, 1);
+
+// ៣. អនុគមន៍បង្កើត URL សម្រាប់មើលរូបភាព ឬឯកសារ Review (សុវត្ថិភាពខ្ពស់)
+const getFileUrl = (file) => {
+    if (file && file instanceof File) {
+        return URL.createObjectURL(file);
+    }
+    return "#";
 };
 
-const deleteExistingFile = (docId) => {
-    if (confirm("តើអ្នកចង់លុបឯកសារនេះមែនទេ?")) {
-        const index = props.officer.documents.findIndex((d) => d.id === docId);
-        if (index !== -1) {
-            props.officer.documents.splice(index, 1);
-        }
+// ៤. អនុគមន៍លុបឯកសារ
+const deleteFile = (docId = null, index = null) => {
+    // 🎯 ករណីទី ១៖ លុបឯកសារថ្មីដែលទើបរើស (Client-side Review)
+    if (index !== null && docId === null) {
+        newSelectedFiles.value.splice(index, 1);
+        form.documents = [...newSelectedFiles.value]; // Sync ទៅកាន់ form
+        return;
+    }
+
+    // ករណីទី ២៖ លុបឯកសារចាស់ពី Database (Server-side)
+    if (docId) {
+        Swal.fire({
+            title: "តើអ្នកពិតជាចង់លុបទេ?",
+            text: "ឯកសារនេះនឹងត្រូវលុបចេញពីប្រព័ន្ធទាំងស្រុង!",
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonColor: "#3085d6",
+            cancelButtonColor: "#d33",
+            confirmButtonText: "បាទ/ចាស ចង់លុប!",
+            cancelButtonText: "បោះបង់",
+            background: "#ffffff",
+            customClass: {
+                title: "font-siemreap text-lg",
+                htmlContainer: "font-siemreap text-sm",
+                confirmButton: "font-siemreap text-sm px-4 py-2 rounded-lg",
+                cancelButton: "font-siemreap text-sm px-4 py-2 rounded-lg",
+            },
+        }).then((result) => {
+            if (result.isConfirmed) {
+                // 💡 ចំណាំ៖ ប្រើប្រាស់រចនាសម្ព័ន្ធ URL ផ្ទាល់ដើម្បីដោះស្រាយ Ziggy Route Error
+                router.delete(`/documents/${docId}`, {
+                    preserveScroll: true,
+                    onSuccess: () => {
+                        Swal.fire({
+                            title: "ជោគជ័យ!",
+                            text: "ឯកសារត្រូវបានលុបដោយជោគជ័យ។",
+                            icon: "success",
+                            confirmButtonText: "បិទ",
+                            confirmButtonColor: "#10B981",
+                            customClass: {
+                                title: "font-siemreap",
+                                htmlContainer: "font-siemreap",
+                                confirmButton: "font-siemreap",
+                            },
+                        });
+
+                        // លុបវាចេញពី UI Array របស់ props
+                        if (props.officer && props.officer.documents) {
+                            props.officer.documents =
+                                props.officer.documents.filter(
+                                    (d) => d.DocID !== docId
+                                );
+                        }
+                    },
+                    onError: (errors) => {
+                        console.error("មានបញ្ហាក្នុងការលុប៖", errors);
+                        Swal.fire({
+                            title: "មានបញ្ហា!",
+                            text: "មិនអាចលុបឯកសារនេះបានទេ មានកំហុសបច្ចេកទេស។",
+                            icon: "error",
+                            confirmButtonText: "យល់ព្រម",
+                            confirmButtonColor: "#EF4444",
+                        });
+                    },
+                });
+            }
+        });
     }
 };
 
@@ -99,8 +168,6 @@ const filteredPlans = computed(() => {
 
 const filteredOffices = computed(() => {
     const allOffices = props.offices || [];
-
-    // ១. Filter តាម PlanID ធម្មតា
     let filtered = [];
     if (form.PlanID) {
         filtered = allOffices.filter((office) => office.plan_id == form.PlanID);
@@ -114,7 +181,6 @@ const filteredOffices = computed(() => {
             }
         }
     }
-
     return filtered;
 });
 
@@ -887,7 +953,7 @@ const submit = () => {
                         </div>
                         <div class="flex flex-col md:flex-row md:items-center">
                             <label
-                                class="block text-md font-medium text-gray-700 w-64 font-siemreap"
+                                class="block text-md font-medium text-gray-700 w-72 font-siemreap"
                             >
                                 សំណុំឯកសារ* :
                             </label>
@@ -932,116 +998,141 @@ const submit = () => {
                                 </label>
 
                                 <div class="mt-3 space-y-2">
-                                    <div
-                                        v-for="doc in props.officer.documents"
-                                        :key="'old-' + doc.DocID"
-                                        class="flex items-center justify-between p-3 bg-white border border-gray-200 rounded-lg shadow-sm w-full"
+                                    <template
+                                        v-if="
+                                            props.officer &&
+                                            props.officer.documents &&
+                                            props.officer.documents.length > 0
+                                        "
                                     >
-                                        <div class="flex items-center gap-3">
-                                            <svg
-                                                class="w-6 h-6 text-blue-500"
-                                                fill="none"
-                                                stroke="currentColor"
-                                                viewBox="0 0 24 24"
-                                            >
-                                                <path
-                                                    stroke-linecap="round"
-                                                    stroke-linejoin="round"
-                                                    stroke-width="2"
-                                                    d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
-                                                ></path>
-                                            </svg>
-                                            <a
-                                                :href="
-                                                    doc.FilePath
-                                                        ? doc.FilePath.startsWith(
-                                                              'storage/'
-                                                          )
-                                                            ? `/${doc.FilePath}`
-                                                            : `/${doc.FilePath}`
-                                                        : '#'
-                                                "
-                                                @click.prevent="
-                                                    viewDocument(doc.FilePath)
-                                                "
-                                                target="_blank"
-                                                class="text-sm font-medium text-gray-700 hover:text-blue-600 hover:underline truncate max-w-md transition-all cursor-pointer"
-                                            >
-                                                {{ doc.FileName }}
-                                            </a>
-                                        </div>
-                                        <button
-                                            type="button"
-                                            @click="
-                                                deleteExistingFile(doc.DocID)
-                                            "
-                                            class="p-1 hover:bg-red-50 rounded-full transition-colors group"
+                                        <div
+                                            v-for="doc in props.officer
+                                                .documents"
+                                            :key="'old-' + doc.DocID"
+                                            class="flex items-center justify-between p-3 bg-gray-50 border border-gray-200 rounded-lg shadow-sm w-full"
                                         >
-                                            <svg
-                                                class="w-5 h-5 text-gray-400 group-hover:text-red-500"
-                                                fill="none"
-                                                stroke="currentColor"
-                                                viewBox="0 0 24 24"
+                                            <div
+                                                class="flex items-center gap-3"
                                             >
-                                                <path
-                                                    stroke-linecap="round"
-                                                    stroke-linejoin="round"
-                                                    stroke-width="2"
-                                                    d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
-                                                ></path>
-                                            </svg>
-                                        </button>
-                                    </div>
-
-                                    <div
-                                        v-for="(file, index) in form.documents"
-                                        :key="'new-' + index"
-                                        class="flex items-center justify-between p-3 bg-white border border-gray-200 rounded-lg shadow-sm w-full"
-                                    >
-                                        <div class="flex items-center gap-3">
-                                            <svg
-                                                class="w-6 h-6 text-blue-500"
-                                                fill="none"
-                                                stroke="currentColor"
-                                                viewBox="0 0 24 24"
-                                            >
-                                                <path
-                                                    stroke-linecap="round"
-                                                    stroke-linejoin="round"
-                                                    stroke-width="2"
-                                                    d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
-                                                ></path>
-                                            </svg>
-                                            <div class="flex flex-col">
-                                                <a
-                                                    :href="viewFile(file)"
-                                                    target="_blank"
-                                                    class="text-sm font-medium text-gray-700 hover:text-blue-600 hover:underline truncate max-w-md transition-all"
+                                                <svg
+                                                    class="w-6 h-6 text-gray-400"
+                                                    fill="none"
+                                                    stroke="currentColor"
+                                                    viewBox="0 0 24 24"
                                                 >
-                                                    {{ file.name }}
+                                                    <path
+                                                        stroke-linecap="round"
+                                                        stroke-linejoin="round"
+                                                        stroke-width="2"
+                                                        d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+                                                    ></path>
+                                                </svg>
+                                                <a
+                                                    :href="
+                                                        doc.FilePath
+                                                            ? `/${doc.FilePath}`
+                                                            : '#'
+                                                    "
+                                                    @click.prevent="
+                                                        viewDocument(
+                                                            doc.FilePath
+                                                        )
+                                                    "
+                                                    target="_blank"
+                                                    class="text-sm font-medium text-blue-600 hover:underline truncate max-w-md transition-all cursor-pointer"
+                                                >
+                                                    {{ doc.FileName }}
                                                 </a>
                                             </div>
-                                        </div>
-                                        <button
-                                            type="button"
-                                            @click="removeFile(index)"
-                                            class="p-1 hover:bg-red-50 rounded-full transition-colors group"
-                                        >
-                                            <svg
-                                                class="w-5 h-5 text-gray-400 group-hover:text-red-500"
-                                                fill="none"
-                                                stroke="currentColor"
-                                                viewBox="0 0 24 24"
+                                            <button
+                                                type="button"
+                                                @click="
+                                                    deleteFile(doc.DocID, null)
+                                                "
+                                                class="p-1 text-red-500 hover:bg-red-100 rounded-full transition-colors"
                                             >
-                                                <path
-                                                    stroke-linecap="round"
-                                                    stroke-linejoin="round"
-                                                    stroke-width="2"
-                                                    d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
-                                                ></path>
-                                            </svg>
-                                        </button>
-                                    </div>
+                                                <svg
+                                                    class="w-5 h-5"
+                                                    fill="none"
+                                                    stroke="currentColor"
+                                                    viewBox="0 0 24 24"
+                                                >
+                                                    <path
+                                                        stroke-linecap="round"
+                                                        stroke-linejoin="round"
+                                                        stroke-width="2"
+                                                        d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-4v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
+                                                    />
+                                                </svg>
+                                            </button>
+                                        </div>
+                                    </template>
+
+                                    <template
+                                        v-if="
+                                            newSelectedFiles &&
+                                            newSelectedFiles.length > 0
+                                        "
+                                    >
+
+                                        <div
+                                            v-for="(
+                                                file, index
+                                            ) in newSelectedFiles"
+                                            :key="'new-' + index"
+                                            class="flex items-center justify-between p-3 bg-blue-50/40 border border-blue-200 rounded-lg shadow-sm w-full"
+                                        >
+                                            <div
+                                                class="flex items-center gap-3"
+                                            >
+                                                <svg
+                                                    class="w-6 h-6 text-emerald-500"
+                                                    fill="none"
+                                                    stroke="currentColor"
+                                                    viewBox="0 0 24 24"
+                                                >
+                                                    <path
+                                                        stroke-linecap="round"
+                                                        stroke-linejoin="round"
+                                                        stroke-width="2"
+                                                        d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+                                                    ></path>
+                                                </svg>
+                                                <div class="flex flex-col">
+                                                    <a
+                                                        :href="getFileUrl(file)"
+                                                        target="_blank"
+                                                        class="text-sm font-medium text-gray-700 hover:text-blue-600 hover:underline truncate max-w-md transition-all"
+                                                    >
+                                                        {{
+                                                            file
+                                                                ? file.name
+                                                                : ""
+                                                        }}
+                                                    </a>
+                                                </div>
+                                            </div>
+                                            <button
+                                                type="button"
+                                                @click="deleteFile(null, index)"
+                                                class="p-1 text-red-500 hover:bg-red-100 rounded-full transition-colors"
+                                            >
+                                                <svg
+                                                    class="w-5 h-5"
+                                                    fill="none"
+                                                    stroke="currentColor"
+                                                    viewBox="0 0 24 24"
+                                                >
+                                                    <path
+                                                        stroke-linecap="round"
+                                                        stroke-linejoin="round"
+                                                        stroke-width="2"
+                                                        d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-4v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
+                                                    />
+                                                </svg>
+                                            </button>
+                                        </div>
+                                    </template>
                                 </div>
                             </div>
                         </div>

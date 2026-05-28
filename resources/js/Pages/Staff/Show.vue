@@ -49,25 +49,33 @@ const formatKhmerDate = (dateStr) => {
     return formatKhmerNumber(formattedDate);
 };
 
-// មុខងារឆែកប្រភេទ File
-const isImage = (fileName) => {
-    if (!fileName) return false;
-    const extension = fileName.split(".").pop().toLowerCase();
+// មុខងារឆែកប្រភេទ File (កែសម្រួលឱ្យឆែកបានច្បាស់លាស់)
+const isImage = (fileName, filePath) => {
+    if (!fileName && !filePath) return false;
+    // ឆែកមើលកន្ទុយ File ទាំងពីរ បើមានមួយណាជាប្រភេទរូបភាព គឺចាត់ទុកជារូបភាព
+    const extName = fileName ? fileName.split(".").pop().toLowerCase() : "";
+    const extPath = filePath ? filePath.split(".").pop().toLowerCase() : "";
     const imageExtensions = ["jpg", "jpeg", "png", "gif", "webp", "bmp", "svg"];
-    return imageExtensions.includes(extension);
+
+    return (
+        imageExtensions.includes(extName) || imageExtensions.includes(extPath)
+    );
 };
 
-const isPDF = (fileName) => {
-    if (!fileName) return false;
-    return fileName.split(".").pop().toLowerCase() === "pdf";
+const isPDF = (fileName, filePath) => {
+    if (!fileName && !filePath) return false;
+    const extName = fileName ? fileName.split(".").pop().toLowerCase() : "";
+    const extPath = filePath ? filePath.split(".").pop().toLowerCase() : "";
+
+    return extName === "pdf" || extPath === "pdf";
 };
 
-// មើល File (បើក Tab ថ្មី)
 const viewFile = async (filePath) => {
     if (!filePath) return;
 
-    const primaryUrl = `/${filePath}`; // ផ្លូវថ្មី (រត់ចូល public/documents/... ផ្ទាល់)
-    const fallbackUrl = `/storage/${filePath}`; // ផ្លូវចាស់ (រត់ចូល storage/app/public/documents/...)
+    // 🎯 ប្រើ encodeURI ដើម្បីការពារករណីឈ្មោះ File មានអក្សរខ្មែរ ឬដកឃ្លា កុំឱ្យបាក់លីងលើ Railway
+    const primaryUrl = encodeURI(`/${filePath}`); // ផ្លូវថ្មី (public/documents/...)
+    const fallbackUrl = encodeURI(`/storage/${filePath}`); // ផ្លូវចាស់ (storage/app/public/documents/...)
 
     try {
         // លួចឆែកមើលមួយភ្លែតសិនថា តើផ្លូវថ្មីមានសាច់ឯកសារពិតមែនអត់
@@ -86,19 +94,35 @@ const viewFile = async (filePath) => {
     }
 };
 
-// លុបឯកសារ
-const deleteFile = (id) => {
-    if (confirm("តើអ្នកពិតជាចង់លុបឯកសារនេះមែនទេ?")) {
-        // កែតម្រូវ route ទៅតាម backend របស់អ្នក
-        router.delete(route("officer.documents.destroy", id), {
-            preserveScroll: true,
-            onSuccess: () => {
-                activeMenu.value = null;
-                alert("ឯកសារត្រូវបានលុបដោយជោគជ័យ");
-            },
-        });
+// អនុគមន៍សម្រាប់ទាញយក File (កែសម្រួលបញ្ហាឈ្មោះ File មានអក្សរខ្មែរ និងដកឃ្លា)
+const downloadFile = async (filePath, fileName) => {
+    if (!filePath) return;
+
+    // ប្រើ encodeURI ដើម្បីការពារករណីផ្លូវ File មានអក្សរខ្មែរ ឬដកឃ្លា ទើប Railway ស្គាល់
+    const primaryUrl = encodeURI(`/${filePath}`);
+    const fallbackUrl = encodeURI(`/storage/${filePath}`);
+
+    try {
+        const response = await fetch(primaryUrl, { method: "HEAD" });
+        const finalUrl = response.ok ? primaryUrl : fallbackUrl;
+
+        const link = document.createElement("a");
+        link.href = finalUrl;
+        // ការពារកូដកុំឱ្យបាក់ពេលទាញយកឈ្មោះ File ភាសាខ្មែរ
+        link.setAttribute("download", fileName || "document");
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+    } catch (error) {
+        const link = document.createElement("a");
+        link.href = fallbackUrl;
+        link.setAttribute("download", fileName || "document");
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
     }
 };
+
 </script>
 <template>
     <Head title="ព័ត៌មានរបស់មន្ត្រី | ស្នងការដ្ឋាននគរបាលខេត្តប៉ៃលិន" />
@@ -456,14 +480,11 @@ const deleteFile = (id) => {
                                     class="w-full h-full"
                                 >
                                     <img
-                                        :href="
-                                            doc.FilePath.startsWith('http')
-                                                ? doc.FilePath
-                                                : doc.FilePath.includes(
-                                                      'storage'
-                                                  )
-                                                ? `/${doc.FilePath}`
-                                                : `/storage/${doc.FilePath}`
+                                        :src="`/${doc.FilePath}`"
+                                        @error="
+                                            (e) => {
+                                                e.target.src = `/storage/${doc.FilePath}`;
+                                            }
                                         "
                                         class="w-full h-full object-cover"
                                     />
@@ -472,16 +493,12 @@ const deleteFile = (id) => {
                                 <svg
                                     v-else
                                     class="w-8 h-8 text-blue-500"
-                                    fill="none"
-                                    stroke="currentColor"
+                                    fill="currentColor"
                                     viewBox="0 0 24 24"
                                 >
                                     <path
-                                        stroke-linecap="round"
-                                        stroke-linejoin="round"
-                                        stroke-width="2"
-                                        d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
-                                    ></path>
+                                        d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8l-6-6zM13 9V3.5L18.5 9H13z"
+                                    />
                                 </svg>
                             </div>
 
@@ -527,21 +544,17 @@ const deleteFile = (id) => {
                                     >
                                         មើល
                                     </button>
-                                    <a
-                                        :href="
-                                            doc.FilePath.startsWith('http')
-                                                ? doc.FilePath
-                                                : doc.FilePath.includes(
-                                                      'storage'
-                                                  )
-                                                ? `/${doc.FilePath}`
-                                                : `/storage/${doc.FilePath}`
+                                    <button
+                                        @click="
+                                            downloadFile(
+                                                doc.FilePath,
+                                                doc.FileName
+                                            )
                                         "
-                                        download
-                                        class="w-full text-left px-4 py-2 text-[12px] hover:bg-gray-50 border-b block"
+                                        class="w-full text-left px-4 py-2 text-[12px] hover:bg-gray-50 block"
                                     >
                                         ទាញយក
-                                    </a>
+                                    </button>
                                 </div>
                             </div>
                         </div>

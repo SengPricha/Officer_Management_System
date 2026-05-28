@@ -286,7 +286,13 @@ watch([searchTerm, selectedOffice, selectedPlan], () => {
                                     class="hover:bg-blue-50/50 transition-colors cursor-pointer group whitespace-nowrap"
                                 >
                                     <td class="px-4 py-3">
-                                        {{ toKhmerNumber(index + 1) }}
+                                        {{
+                                            toKhmerNumber(
+                                                (officers.current_page - 1) *
+                                                    officers.per_page +
+                                                    (index + 1)
+                                            )
+                                        }}
                                     </td>
                                     <td class="px-4 py-3 font-medium">
                                         {{ row.rank?.RankName }}
