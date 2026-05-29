@@ -34,6 +34,12 @@ onUnmounted(() => {
     window.removeEventListener("click", handleOutsideClick);
 });
 
+const toKhmerNumber = (num) => {
+    if (num === null || num === undefined) return "";
+    const khmerNumbers = ["០", "១", "២", "៣", "៤", "៥", "៦", "៧", "៨", "៩"];
+    return num.toString().replace(/\d/g, (d) => khmerNumbers[d]);
+};
+
 // មុខងារប្តូរលេខ និងថ្ងៃខែជាភាសាខ្មែរ
 const formatKhmerNumber = (num) => {
     if (!num) return "----";
@@ -122,7 +128,6 @@ const downloadFile = async (filePath, fileName) => {
         document.body.removeChild(link);
     }
 };
-
 </script>
 <template>
     <Head title="ព័ត៌មានរបស់មន្ត្រី | ស្នងការដ្ឋាននគរបាលខេត្តប៉ៃលិន" />
@@ -194,7 +199,7 @@ const downloadFile = async (filePath, fileName) => {
                                     {{ officer.rank?.RankName }}
                                 </p>
                                 <h1
-                                    class="font-moul md:ext-xl text-md text-gray-900"
+                                    class="font-moul md:text-xl text-md text-gray-900"
                                 >
                                     {{ officer.OfficerName }}
                                 </h1>
@@ -362,7 +367,10 @@ const downloadFile = async (filePath, fileName) => {
                     <h3
                         class="font-moul md:text-sm text-xs p-6 border-b text-gray-700 bg-gray-50/50"
                     >
-                        ជីវប្រវត្តិ
+                        ជីវប្រវត្តិការងារ
+                    </h3>
+                    <h3 class="font-moul md:text-sm text-xs p-4 text-gray-700">
+                        មុខតំណែង
                     </h3>
                     <div class="overflow-x-auto">
                         <table
@@ -370,20 +378,25 @@ const downloadFile = async (filePath, fileName) => {
                         >
                             <thead class="bg-gray-200 border-b font-moul">
                                 <tr>
-                                    <th
+                                    <!-- <th
                                         class="px-4 py-4 md:text-sm text-xs text-gray-500 font-medium text-center"
                                     >
                                         ឋានន្តរស័ក្តិ
+                                    </th> -->
+                                    <th
+                                        class="px-4 py-4 md:text-sm text-xs text-gray-500 font-medium text-center"
+                                    >
+                                        លេខរៀង
                                     </th>
                                     <th
                                         class="px-4 py-4 md:text-sm text-xs text-gray-500 font-medium text-center"
                                     >
-                                        តួនាទី
+                                        មុខតំណែង
                                     </th>
                                     <th
                                         class="px-4 py-4 md:text-sm text-xs text-gray-500 font-medium text-center"
                                     >
-                                        ឯកសារ
+                                        លេខឯកសារ
                                     </th>
                                     <th
                                         class="px-4 py-4 md:text-sm text-xs text-gray-500 font-medium text-center"
@@ -394,7 +407,7 @@ const downloadFile = async (filePath, fileName) => {
                             </thead>
                             <tbody class="divide-y divide-gray-200">
                                 <tr
-                                    v-for="bio in officer.biographies"
+                                    v-for="(bio, index) in officer.biographies"
                                     :key="bio.id"
                                     class="hover:bg-gray-50 transition-colors"
                                 >
@@ -402,7 +415,7 @@ const downloadFile = async (filePath, fileName) => {
                                         <div
                                             class="md:text-sm text-xs font-medium text-gray-900"
                                         >
-                                            {{ bio.rank?.RankName }}
+                                            {{ toKhmerNumber(index + 1) }}
                                         </div>
                                     </td>
                                     <td class="px-4 py-4 text-center">
@@ -410,6 +423,89 @@ const downloadFile = async (filePath, fileName) => {
                                             class="md:text-sm text-xs text-gray-700"
                                         >
                                             {{ bio.role?.RoleName }}
+                                        </div>
+                                    </td>
+                                    <td class="px-4 py-4 text-center">
+                                        <div
+                                            class="md:text-sm text-xs text-gray-900 font-siemreap"
+                                        >
+                                            {{ bio.biography_name }}
+                                        </div>
+                                    </td>
+                                    <td
+                                        class="px-4 py-4 md:text-sm text-xs text-gray-600 whitespace-nowrap text-center font-siemreap"
+                                    >
+                                        {{
+                                            formatKhmerNumber(
+                                                bio.effective_date
+                                            )
+                                        }}
+                                    </td>
+                                </tr>
+                                <tr v-if="!officer.biographies?.length">
+                                    <td
+                                        colspan="4"
+                                        class="px-4 py-8 text-center text-gray-400 text-sm italic"
+                                    >
+                                        មិនទាន់មានទិន្នន័យជីវប្រវត្តិនៅឡើយ
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div
+                    class="lg:col-span-7 bg-white rounded-xl shadow-sm overflow-hidden border border-gray-100"
+                >
+                    <h3 class="font-moul md:text-sm text-xs p-4 text-gray-700">
+                        ឋានន្តរស័ក្តិ
+                    </h3>
+                    <div class="overflow-x-auto">
+                        <table
+                            class="w-full text-left font-siemreap whitespace-nowrap"
+                        >
+                            <thead class="bg-gray-200 border-b font-moul">
+                                <tr>
+                                    <th
+                                        class="px-4 py-4 md:text-sm text-xs text-gray-500 font-medium text-center"
+                                    >
+                                        លេខរៀង
+                                    </th>
+                                    <th
+                                        class="px-4 py-4 md:text-sm text-xs text-gray-500 font-medium text-center"
+                                    >
+                                        ឋានន្តរស័ក្តិ
+                                    </th>
+                                    <th
+                                        class="px-4 py-4 md:text-sm text-xs text-gray-500 font-medium text-center"
+                                    >
+                                        លេខឯកសារ
+                                    </th>
+                                    <th
+                                        class="px-4 py-4 md:text-sm text-xs text-gray-500 font-medium text-center"
+                                    >
+                                        កាលបរិច្ឆេទ
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-gray-200">
+                                <tr
+                                    v-for="(bio, index) in officer.biographies"
+                                    :key="bio.id"
+                                    class="hover:bg-gray-50 transition-colors"
+                                >
+                                    <td class="px-4 py-4 text-center">
+                                        <div
+                                            class="md:text-sm text-xs font-medium text-gray-900"
+                                        >
+                                            {{ toKhmerNumber(index + 1) }}
+                                        </div>
+                                    </td>
+                                    <td class="px-4 py-4 text-center">
+                                        <div
+                                            class="md:text-sm text-xs text-gray-700"
+                                        >
+                                            {{ bio.rank?.RankName }}
                                         </div>
                                     </td>
                                     <td class="px-4 py-4 text-center">

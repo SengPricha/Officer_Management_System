@@ -39,6 +39,12 @@ const cancelEdit = () => {
     form.id = null;
 };
 
+const toKhmerNumber = (num) => {
+    if (num === null || num === undefined) return "";
+    const khmerNumbers = ["០", "១", "២", "៣", "៤", "៥", "៦", "៧", "៨", "៩"];
+    return num.toString().replace(/\d/g, (d) => khmerNumbers[d]);
+};
+
 const dateInput = ref(null);
 
 onMounted(() => {
@@ -400,111 +406,261 @@ const submit = () => {
                         </div>
                     </form>
                 </div>
-
-                <div
-                    class="lg:col-span-7 bg-white rounded-xl shadow-sm overflow-hidden border border-gray-100"
-                >
-                    <h3
-                        class="font-moul md:text-sm text-xs p-6 border-b text-gray-700 bg-gray-50/50"
+                <div class="lg:col-span-7 flex flex-col gap-6">
+                    <div
+                        class="lg:col-span-7 bg-white rounded-xl shadow-sm overflow-hidden border border-gray-100"
                     >
-                        ជីវប្រវត្តិ
-                    </h3>
-                    <div class="md:overflow-visible overflow-x-auto get-scrollbar">
-                        <table class="w-full text-left font-siemreap whitespace-nowrap">
-                            <thead class="bg-gray-200 border-b font-moul">
-                                <tr>
-                                    <th
+                        <h3
+                            class="font-moul md:text-sm text-xs p-6 border-b text-gray-700 bg-gray-50/50"
+                        >
+                            ជីវប្រវត្តិការងារ
+                        </h3>
+                        <h3
+                            class="font-moul md:text-sm text-xs p-6 text-gray-700"
+                        >
+                            មុខតំណែង
+                        </h3>
+                        <div
+                            class="md:overflow-visible overflow-x-auto get-scrollbar"
+                        >
+                            <table
+                                class="w-full text-left font-siemreap whitespace-nowrap"
+                            >
+                                <thead class="bg-gray-200 border-b font-moul">
+                                    <tr>
+                                        <!-- <th
                                         class="px-4 py-4 md:text-sm text-xs text-gray-500 font-medium text-center"
                                     >
                                         ឋានន្តរស័ក្តិ
-                                    </th>
-                                    <th
-                                        class="px-4 py-4 md:text-sm text-xs text-gray-500 font-medium text-center"
+                                    </th> -->
+                                        <th
+                                            class="px-4 py-4 md:text-sm text-xs text-gray-500 font-medium text-center"
+                                        >
+                                            លេខរៀង
+                                        </th>
+                                        <th
+                                            class="px-4 py-4 md:text-sm text-xs text-gray-500 font-medium text-center"
+                                        >
+                                            មុខតំណែង
+                                        </th>
+                                        <th
+                                            class="px-4 py-4 md:text-sm text-xs text-gray-500 font-medium text-center"
+                                        >
+                                            លេខឯកសារ
+                                        </th>
+                                        <th
+                                            class="px-4 py-4 md:text-sm text-xs text-gray-500 font-medium text-center"
+                                        >
+                                            កាលបរិច្ឆេទ
+                                        </th>
+                                        <th
+                                            class="px-4 py-4 md:text-sm text-xs text-gray-500 font-medium text-center"
+                                        >
+                                            ផ្សេងៗ
+                                        </th>
+                                    </tr>
+                                </thead>
+                                <tbody class="divide-y divide-gray-200">
+                                    <tr
+                                        v-for="(
+                                            bio, index
+                                        ) in officer.biographies"
+                                        :key="bio.id"
+                                        class="hover:bg-gray-50 transition-colors"
                                     >
-                                        តួនាទី
-                                    </th>
-                                    <th
-                                        class="px-4 py-4 md:text-sm text-xs text-gray-500 font-medium text-center"
-                                    >
-                                        ឯកសារ
-                                    </th>
-                                    <th
-                                        class="px-4 py-4 md:text-sm text-xs text-gray-500 font-medium text-center"
-                                    >
-                                        កាលបរិច្ឆេទ
-                                    </th>
-                                    <th
-                                        class="px-4 py-4 md:text-sm text-xs text-gray-500 font-medium text-center"
-                                    >
-                                        ផ្សេងៗ
-                                    </th>
-                                </tr>
-                            </thead>
-                            <tbody class="divide-y divide-gray-200">
-                                <tr
-                                    v-for="bio in officer.biographies"
-                                    :key="bio.id"
-                                    class="hover:bg-gray-50 transition-colors"
-                                >
-                                    <td class="px-4 py-4 text-center">
+                                        <!-- <td class="px-4 py-4 text-center">
                                         <div
                                             class="md:text-sm text-[10px] font-medium text-gray-900"
                                         >
                                             {{ bio.rank?.RankName }}
                                         </div>
-                                    </td>
-                                    <td class="px-4 py-4 text-center">
-                                        <div class="md:text-sm text-[10px] text-gray-700">
-                                            {{ bio.role?.RoleName }}
-                                        </div>
-                                    </td>
-                                    <td class="px-4 py-4 text-center">
-                                        <div
-                                            class="md:text-sm text-[10px] text-gray-900 font-siemreap"
-                                        >
-                                            {{ bio.biography_name }}
-                                        </div>
-                                    </td>
-                                    <td
-                                        class="px-4 py-4 md:text-sm text-[10px] text-gray-600 whitespace-nowrap text-center font-siemreap"
-                                    >
-                                        {{ toKhmerNumbers(bio.effective_date) }}
-                                    </td>
-                                    <td class="px-4 py-4 text-center">
-                                        <button
-                                            @click="editBiography(bio)"
-                                            class="inline-flex items-center px-3 py-1.5 text-[#D4A906] gap-1.5 group"
-                                        >
-                                            <svg
-                                                class="w-4 h-4 group-hover:scale-110 transition-transform"
-                                                fill="none"
-                                                stroke="currentColor"
-                                                viewBox="0 0 24 24"
-                                                xmlns="http://www.w3.org/2000/svg"
+                                    </td> -->
+                                        <td class="px-4 py-4 text-center">
+                                            <div
+                                                class="md:text-sm text-[10px] font-medium text-gray-900"
                                             >
-                                                <path
-                                                    stroke-linecap="round"
-                                                    stroke-linejoin="round"
-                                                    stroke-width="2"
-                                                    d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"
-                                                />
-                                            </svg>
-                                            <span class="md:text-sm text-[10px] font-medium"
-                                                >កែប្រែ</span
+                                                {{ toKhmerNumber(index + 1) }}
+                                            </div>
+                                        </td>
+                                        <td class="px-4 py-4 text-center">
+                                            <div
+                                                class="md:text-sm text-[10px] text-gray-700"
                                             >
-                                        </button>
-                                    </td>
-                                </tr>
-                                <tr v-if="!officer.biographies?.length">
-                                    <td
-                                        colspan="5"
-                                        class="px-4 py-8 text-center text-gray-400 text-sm italic"
+                                                {{ bio.role?.RoleName }}
+                                            </div>
+                                        </td>
+                                        <td class="px-4 py-4 text-center">
+                                            <div
+                                                class="md:text-sm text-[10px] text-gray-900 font-siemreap"
+                                            >
+                                                {{ bio.biography_name }}
+                                            </div>
+                                        </td>
+                                        <td
+                                            class="px-4 py-4 md:text-sm text-[10px] text-gray-600 whitespace-nowrap text-center font-siemreap"
+                                        >
+                                            {{
+                                                toKhmerNumbers(
+                                                    bio.effective_date
+                                                )
+                                            }}
+                                        </td>
+                                        <td class="px-4 py-4 text-center">
+                                            <button
+                                                @click="editBiography(bio)"
+                                                class="inline-flex items-center px-3 py-1.5 text-[#D4A906] gap-1.5 group"
+                                            >
+                                                <svg
+                                                    class="w-4 h-4 group-hover:scale-110 transition-transform"
+                                                    fill="none"
+                                                    stroke="currentColor"
+                                                    viewBox="0 0 24 24"
+                                                    xmlns="http://www.w3.org/2000/svg"
+                                                >
+                                                    <path
+                                                        stroke-linecap="round"
+                                                        stroke-linejoin="round"
+                                                        stroke-width="2"
+                                                        d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"
+                                                    />
+                                                </svg>
+                                                <span
+                                                    class="md:text-sm text-[10px] font-medium"
+                                                    >កែប្រែ</span
+                                                >
+                                            </button>
+                                        </td>
+                                    </tr>
+                                    <tr v-if="!officer.biographies?.length">
+                                        <td
+                                            colspan="5"
+                                            class="px-4 py-8 text-center text-gray-400 text-sm italic"
+                                        >
+                                            មិនទាន់មានទិន្នន័យជីវប្រវត្តិនៅឡើយ
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div
+                        class="lg:col-span-7 bg-white rounded-xl shadow-sm overflow-hidden border border-gray-100"
+                    >
+                        <h3
+                            class="font-moul md:text-sm text-xs p-6 text-gray-700"
+                        >
+                            ឋានន្តរស័ក្តិ
+                        </h3>
+                        <div
+                            class="md:overflow-visible overflow-x-auto get-scrollbar"
+                        >
+                            <table
+                                class="w-full text-left font-siemreap whitespace-nowrap"
+                            >
+                                <thead class="bg-gray-200 border-b font-moul">
+                                    <tr>
+                                        <th
+                                            class="px-4 py-4 md:text-sm text-xs text-gray-500 font-medium text-center"
+                                        >
+                                            លេខរៀង
+                                        </th>
+                                        <th
+                                            class="px-4 py-4 md:text-sm text-xs text-gray-500 font-medium text-center"
+                                        >
+                                            ឋានន្តរស័ក្តិ
+                                        </th>
+                                        <th
+                                            class="px-4 py-4 md:text-sm text-xs text-gray-500 font-medium text-center"
+                                        >
+                                            លេខឯកសារ
+                                        </th>
+                                        <th
+                                            class="px-4 py-4 md:text-sm text-xs text-gray-500 font-medium text-center"
+                                        >
+                                            កាលបរិច្ឆេទ
+                                        </th>
+                                        <th
+                                            class="px-4 py-4 md:text-sm text-xs text-gray-500 font-medium text-center"
+                                        >
+                                            ផ្សេងៗ
+                                        </th>
+                                    </tr>
+                                </thead>
+                                <tbody class="divide-y divide-gray-200">
+                                    <tr
+                                        v-for="(
+                                            bio, index
+                                        ) in officer.biographies"
+                                        :key="bio.id"
+                                        class="hover:bg-gray-50 transition-colors"
                                     >
-                                        មិនទាន់មានទិន្នន័យជីវប្រវត្តិនៅឡើយ
-                                    </td>
-                                </tr>
-                            </tbody>
-                        </table>
+                                        <td class="px-4 py-4 text-center">
+                                            <div
+                                                class="md:text-sm text-[10px] font-medium text-gray-900"
+                                            >
+                                                {{ toKhmerNumber(index + 1) }}
+                                            </div>
+                                        </td>
+                                        <td class="px-4 py-4 text-center">
+                                            <div
+                                                class="md:text-sm text-[10px] font-medium text-gray-900"
+                                            >
+                                                {{ bio.rank?.RankName }}
+                                            </div>
+                                        </td>
+                                        <td class="px-4 py-4 text-center">
+                                            <div
+                                                class="md:text-sm text-[10px] text-gray-900 font-siemreap"
+                                            >
+                                                {{ bio.biography_name }}
+                                            </div>
+                                        </td>
+                                        <td
+                                            class="px-4 py-4 md:text-sm text-[10px] text-gray-600 whitespace-nowrap text-center font-siemreap"
+                                        >
+                                            {{
+                                                toKhmerNumbers(
+                                                    bio.effective_date
+                                                )
+                                            }}
+                                        </td>
+                                        <td class="px-4 py-4 text-center">
+                                            <button
+                                                @click="editBiography(bio)"
+                                                class="inline-flex items-center px-3 py-1.5 text-[#D4A906] gap-1.5 group"
+                                            >
+                                                <svg
+                                                    class="w-4 h-4 group-hover:scale-110 transition-transform"
+                                                    fill="none"
+                                                    stroke="currentColor"
+                                                    viewBox="0 0 24 24"
+                                                    xmlns="http://www.w3.org/2000/svg"
+                                                >
+                                                    <path
+                                                        stroke-linecap="round"
+                                                        stroke-linejoin="round"
+                                                        stroke-width="2"
+                                                        d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"
+                                                    />
+                                                </svg>
+                                                <span
+                                                    class="md:text-sm text-[10px] font-medium"
+                                                    >កែប្រែ</span
+                                                >
+                                            </button>
+                                        </td>
+                                    </tr>
+                                    <tr v-if="!officer.biographies?.length">
+                                        <td
+                                            colspan="5"
+                                            class="px-4 py-8 text-center text-gray-400 text-sm italic"
+                                        >
+                                            មិនទាន់មានទិន្នន័យជីវប្រវត្តិនៅឡើយ
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
                 </div>
             </div>
