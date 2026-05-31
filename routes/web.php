@@ -12,6 +12,7 @@ use App\Http\Controllers\DismissController;
 use App\Http\Controllers\DisabledController;
 use App\Http\Controllers\OfficeController;
 use App\Http\Controllers\SectionController;
+use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\PostController;
 use App\Http\Controllers\StructureController;
 use App\Http\Controllers\SuspendController;
@@ -29,11 +30,8 @@ Route::get('/', function () {
 });
 
 Route::middleware(['auth', 'verified'])->group(function () {
-    // Route::get('/dashboard', function () {
-    //     return Inertia::render('Dashboard');
-    // })->name('dashboard');
 
-    Route::get('/dashboard', [StaffController::class, 'index'])->name('dashboard');
+    Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
     Route::get('/structure/unit/{unit}', [UnitController::class, 'show'])->name('unit.show');
     Route::get('/structure/unit/{unit}/plan/{plan}', [PlanController::class, 'show'])->name('plan.show');
     Route::get('/structure/unit/{unit}/plan/{plan}/office/{office}', [OfficeController::class, 'show'])->name('office.show');
@@ -58,6 +56,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
     Route::get('/staff/create', [StaffController::class, 'create'])->name('staff.create');
+    Route::get('/staff/index', [StaffController::class, 'index'])->name('staff.index');
     Route::post('/staff', [StaffController::class, 'store'])->name('staff.store');
     Route::get('/staff/{id}', [StaffController::class, 'show'])->name('staff.show');
     Route::get('/staff/{id}/edit', [StaffController::class, 'edit'])->name('staff.edit');

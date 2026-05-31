@@ -140,7 +140,7 @@ class StaffController extends Controller
                 }
             });
 
-            return redirect()->route('dashboard')->with('success', 'ទិន្នន័យមន្ត្រីត្រូវបានរក្សាទុកដោយជោគជ័យ!');
+            return redirect()->route('staff.index')->with('success', 'ទិន្នន័យមន្ត្រីត្រូវបានរក្សាទុកដោយជោគជ័យ!');
         } catch (\Exception $e) {
             return back()->withErrors(['error' => 'បរាជ័យក្នុងការរក្សាទុក៖ ' . $e->getMessage()]);
         }
@@ -149,7 +149,7 @@ class StaffController extends Controller
     public function index(Request $request)
     {
         $officers = Officer::with(['rank', 'role', 'unit', 'status', 'plan', 'office'])
-            ->where('StatusID', 1)
+            ->whereIn('StatusID', [1, 2, 3, 4, 5, 11, 12])
             ->when($request->search, function ($query, $search) {
                 $search = trim($search);
                 $query->where(function ($q) use ($search) {
@@ -166,11 +166,13 @@ class StaffController extends Controller
             ->when($request->office, function ($query, $office) {
                 $query->where('OfficeID', $office);
             })
+            ->orderBy('RoleID', 'asc')
             ->orderBy('RankID', 'asc')
+            ->orderByRaw("CAST(OfficerID_Code AS UNSIGNED) asc")
             ->paginate(10)
             ->withQueryString();
 
-        return Inertia::render('Dashboard', [
+        return Inertia::render('Staff/Index', [
             'officers' => $officers,
             'ranks'    => \App\Models\Rank::all(),
             'plans'    => \App\Models\Plan::all(),
@@ -300,7 +302,7 @@ class StaffController extends Controller
             }
         }
 
-        return redirect()->route('dashboard')->with('success', 'កែសម្រួលទិន្នន័យបានជោគជ័យ!');
+        return redirect()->route('staff.index')->with('success', 'កែសម្រួលទិន្នន័យបានជោគជ័យ!');
     }
 
     public function destroy(int $id)
@@ -333,13 +335,10 @@ class StaffController extends Controller
         }
         $officer->delete($id);
 
-        return redirect()->route('dashboard')->with('success', 'ទិន្នន័យមន្ត្រីត្រូវបានលុបដោយជោគជ័យ');
+        return redirect()->route('staff.index')->with('success', 'ទិន្នន័យមន្ត្រីត្រូវបានលុបដោយជោគជ័យ');
     }
 
-    /**
-     * 🎯 មុខងារលុបឯកសារម្តងមួយៗ (កែឈ្មោះ Method និងលុបឱ្យត្រូវតាមការហៅពី Front-end)
-     */
-    public function destroyDocument($id)
+    public function destroyDocument(int $id)
     {
         $document = Document::findOrFail($id);
         $filePath = urldecode($document->FilePath);

@@ -148,7 +148,7 @@ watch([searchTerm], () => {
             </div>
 
             <div
-                class="mx-4 md:mx-5 bg-white rounded-xl shadow-md border border-gray-100 get-scrollbar overflow-x-auto md:overflow-x-visible"
+                class="mx-4 md:mx-5 bg-white rounded-xl shadow-md border border-gray-100 get-scrollbar overflow-x-auto 2xl:overflow-x-visible"
             >
                 <table class="min-w-full divide-y divide-gray-200 whitespace-nowrap">
                     <thead class="bg-gray-50 font-moul">

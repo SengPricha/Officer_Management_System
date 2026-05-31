@@ -143,7 +143,7 @@ const downloadFile = async (filePath, fileName) => {
             </h2>
             <Link
                 :href="route(origin)"
-                class="bg-[#01AAEB] hover:bg-[#4fbbfa] opacity-0 md:opacity-100 text-white flex items-center gap-2 px-4 py-2 rounded-md text-sm font-siemreap transition-all"
+                class="bg-[#01AAEB] hover:bg-[#4fbbfa] opacity-0 lg:opacity-100 text-white flex items-center gap-2 px-4 py-2 rounded-md text-sm font-siemreap transition-all"
             >
                 <svg
                     xmlns="http://www.w3.org/2000/svg"
@@ -163,7 +163,7 @@ const downloadFile = async (filePath, fileName) => {
         </div>
 
         <div
-            class="max-w-8xl mx-auto grid grid-cols-1 md:grid-cols-[650px_1fr] gap-4"
+            class="max-w-8xl mx-auto grid grid-cols-1 2xl:grid-cols-[650px_1fr] gap-4"
         >
             <div class="space-y-4">
                 <div
@@ -351,7 +351,7 @@ const downloadFile = async (filePath, fileName) => {
                                 {{ officer.status?.StatusName }}
                                 <span
                                     v-if="officer.StatusNote"
-                                    class="block text-[10px] text-gray-500 italic"
+                                    class="text-[12px] text-gray-500 italic font-siemreap mt-1"
                                     >({{ officer.StatusNote }})</span
                                 >
                             </div>

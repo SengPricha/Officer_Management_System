@@ -124,7 +124,7 @@ const submit = () => {
                 </div>
                 <button
                     @click="goBack"
-                    class="bg-[#01AAEB] hover:bg-[#4fbbfa] opacity-0 md:opacity-100 text-white flex items-center gap-2 px-4 py-2 rounded-md text-sm font-siemreap transition-all"
+                    class="bg-[#01AAEB] hover:bg-[#4fbbfa] opacity-0 xl:opacity-100 text-white flex items-center gap-2 px-4 py-2 rounded-md text-sm font-siemreap transition-all"
                 >
                     <svg
                         xmlns="http://www.w3.org/2000/svg"

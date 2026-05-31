@@ -387,10 +387,10 @@ const submit = () => {
         <div class="max-w-7xl mx-auto">
             <form
                 @submit.prevent="submit"
-                class="flex flex-col md:flex-row gap-6"
+                class="flex flex-col 2xl:flex-row gap-6"
             >
                 <div
-                    class="bg-white p-6 rounded-2xl shadow-sm w-full md:w-1/3 flex flex-col items-center justify-start"
+                    class="bg-white p-6 rounded-2xl shadow-sm w-full 2xl:w-1/3 flex flex-col items-center justify-start"
                 >
                     <div class="flex flex-col items-center">
                         <div class="relative">
@@ -535,7 +535,7 @@ const submit = () => {
                         </p>
                     </div>
                 </div>
-                <div class="bg-white p-8 rounded-2xl shadow-sm w-full md:w-3/4">
+                <div class="bg-white p-8 rounded-2xl shadow-sm w-full 2xl:w-3/4">
                     <h3 class="text-black mb-6 text-md pb-10 font-moul">
                         កែប្រែព័ត៌មានមន្រ្តី
                     </h3>
